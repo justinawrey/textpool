@@ -8,6 +8,10 @@ const songs = (state = initialSongs, action) => {
             return [...state, action.id]
         case SongActions.DEQUEUE_SONG:
             return state.slice(1)
+        case SongActions.REMOVE_SONG:
+            const removed = [...state]
+            removed.splice(removed.indexOf(action.id), 1)
+            return removed
         default:
             return state
     }

@@ -5,7 +5,7 @@ export const initialMeta = {
         id: 1,
         song: 'fuck you',
         artist: 'cee-lo',
-        playing: false
+        playing: true
     },
     2: {
         id: 2,

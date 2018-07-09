@@ -1,6 +1,7 @@
 export const SongActions = {
     QUEUE_SONG: 'QUEUE_SONG',
     DEQUEUE_SONG: 'DEQUEUE_SONG',
+    REMOVE_SONG: 'REMOVE_SONG',
     SELECT_SONG: 'SELECT_SONG',
     PLAY_SONG: 'PLAY_SONG',
     PAUSE_SONG: 'PAUSE_SONG'
@@ -15,6 +16,11 @@ export const queueSong = id => ({
 // remove song from front of queue
 export const dequeueSong = () => ({
     type: SongActions.DEQUEUE_SONG
+})
+
+export const removeSong = id => ({
+    type: SongActions.REMOVE_SONG,
+    id
 })
 
 // select a song as active

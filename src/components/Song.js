@@ -15,6 +15,18 @@ const Song = styled.div`
     justify-content: space-between;
     align-items: center;
 
+    div:first-child {
+        margin-right: auto;
+    }
+    
+    div:last-child {
+        margin: 0em 1em 0em 1em;
+        font-size: 1.2em;
+        :hover {
+            font-size: 1.4em;
+            color: black;
+        }
+    }
 
     h3 {
         margin: 0px;
@@ -26,17 +38,23 @@ const Song = styled.div`
     }
 `
 
-export default ({song, artist, playing, active, togglePlayback, selectSong}) => (
-    <Song active={active} onClick={() => selectSong()}>
+export default ({song, artist, active, selectCurrent, removeCurrent, pauseCurrent}) => (
+    <Song active={active} onClick={() => selectCurrent()}>
         <div>
             <h3>{song}</h3>
             {artist}
         </div>
-        <div onClick={() => {
-            selectSong()
-            togglePlayback()
+        <div>
+            {active ? 'playing' : 'stopped'}
+        </div>
+        <div onClick={e => {
+            if (active) {
+                pauseCurrent() 
+            }
+            removeCurrent() 
+            e.stopPropagation()
         }}>
-            {playing ? 'playing' : 'stopped'}
+            X
         </div>
     </Song>
 )
