@@ -1,14 +1,20 @@
-import React from 'react'
-import styled from 'styled-components'
+import React from "react";
+import styled, { keyframes } from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+const fadeTo = color => keyframes`
+    to { color: ${color}};
+`
+
+const growTo = size => keyframes`
+    to { font-size: ${size}};
+`
 
 const Song = styled.div`
-    background-color: ${({theme, active}) => active ? 
-        theme.secondary.med :
-        theme.secondary.light};
-    color: ${({theme, active}) => active ? 
-        'black' :
-        theme.primary.dark};
-    font-size: ${({active}) => active && '1.2em'};
+    background-color: ${({ theme, active }) =>
+        active ? theme.secondary.med : theme.secondary.light};
+    color: ${({ theme, active }) => (active ? "black" : theme.primary.dark)};
+    font-size: ${({ active }) => active && "1.2em"};
     padding: 0.3em;
     margin: 0.3em;
     display: flex;
@@ -18,13 +24,17 @@ const Song = styled.div`
     div:first-child {
         margin-right: auto;
     }
-    
+
+    svg:nth-child(2) {
+        :hover {
+            animation: ${fadeTo('darkgreen')} 0.3s ease-in forwards;
+        }
+    }
+
     div:last-child {
         margin: 0em 1em 0em 1em;
-        font-size: 1.2em;
         :hover {
-            font-size: 1.4em;
-            color: black;
+            animation: ${fadeTo('red')} 0.3s ease-in forwards;
         }
     }
 
@@ -33,28 +43,35 @@ const Song = styled.div`
     }
 
     :hover {
-        background-color: ${({theme}) => theme.secondary.med};
-        font-size: 1.2em;
+        background-color: ${({ theme }) => theme.secondary.med};
+        animation: ${growTo('1.2em')} 0.1s ease-in forwards;
     }
-`
+`;
 
-export default ({song, artist, active, selectCurrent, removeCurrent, pauseCurrent}) => (
+export default ({
+    song,
+    artist,
+    active,
+    selectCurrent,
+    removeCurrent,
+    pauseCurrent
+}) => (
     <Song active={active} onClick={() => selectCurrent()}>
         <div>
             <h3>{song}</h3>
             {artist}
         </div>
-        <div>
-            {active ? 'playing' : 'stopped'}
-        </div>
-        <div onClick={e => {
-            if (active) {
-                pauseCurrent() 
-            }
-            removeCurrent() 
-            e.stopPropagation()
-        }}>
-            X
+        {active ? <FontAwesomeIcon icon='pause'/> : <FontAwesomeIcon icon='play'/>}
+        <div
+            onClick={e => {
+                if (active) {
+                    pauseCurrent();
+                }
+                removeCurrent();
+                e.stopPropagation();
+            }}
+        >
+            <FontAwesomeIcon size='lg' icon='times'/>
         </div>
     </Song>
-)
+);
