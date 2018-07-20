@@ -26,14 +26,14 @@ const Song = styled.div`
     }
 
     svg:nth-child(2) {
-        :hover {
+        &:hover {
             animation: ${fadeTo('darkgreen')} 0.3s ease-in forwards;
         }
     }
 
     div:last-child {
         margin: 0em 1em 0em 1em;
-        :hover {
+        &:hover {
             animation: ${fadeTo('red')} 0.3s ease-in forwards;
         }
     }
@@ -42,7 +42,7 @@ const Song = styled.div`
         margin: 0px;
     }
 
-    :hover {
+    &:hover {
         background-color: ${({ theme }) => theme.secondary.med};
         animation: ${growTo('1.2em')} 0.1s ease-in forwards;
     }
