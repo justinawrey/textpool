@@ -38,7 +38,7 @@ const Song = styled.div`
     }
 
     h3 {
-        margin: 0px;
+        margin: 0;
     }
 
     &:hover {
