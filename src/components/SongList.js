@@ -17,11 +17,11 @@ const StyledSongList = styled.div`
     }
 
     > div:first-child {
-        border-top: 0.4em solid ${({ theme }) => theme.secondary.dark};
+        border-top-width: 0.4em;
     }
 
     > div:last-child {
-        border-bottom: 0.4em solid ${({ theme }) => theme.secondary.dark};
+        border-bottom-width: 0.4em;
     }
 `
 
