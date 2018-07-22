@@ -26,7 +26,7 @@ const SongList = ({ songs }) =>
             {songs.map(id => <SongContainer key={id} id={id} />)}
         </StyledSongList>
     ) : (
-        <Spinner />
+        <Spinner round />
     )
 
 export default connect(state => ({ songs: state.songs }))(SongList)
