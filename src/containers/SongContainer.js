@@ -3,10 +3,12 @@ import Song from '../components/Song'
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 
 const mapStateToProps = (state, ownProps) => {
-    const { song, artist } = state.meta[ownProps.id]
+    const { song, artist, playing } = state.meta[ownProps.id]
+    const songs = state.songs
     return {
         active: ownProps.id === state.active,
-        songs: state.songs,
+        playing,
+        songs,
         song,
         artist,
     }

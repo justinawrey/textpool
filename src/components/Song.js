@@ -51,6 +51,7 @@ export default ({
     song,
     artist,
     active,
+    playing,
     selectCurrent,
     removeCurrent,
     pauseCurrent,
@@ -60,10 +61,16 @@ export default ({
             <h3>{song}</h3>
             {artist}
         </div>
-        {active ? (
-            <FontAwesomeIcon icon="pause" />
+        {playing ? (
+            <FontAwesomeIcon
+                icon="pause"
+                onClick={e => {
+                    pauseCurrent()
+                    e.stopPropagation()
+                }}
+            />
         ) : (
-            <FontAwesomeIcon icon="play" />
+            <FontAwesomeIcon icon="play" onClick={() => selectCurrent()} />
         )}
         <div
             onClick={e => {
