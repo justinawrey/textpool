@@ -1,4 +1,23 @@
-export const initialSongs = [1, 2, 3]
+export const initialSongs = [
+    1,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+]
 export const initialActive = 1
 export const initialMeta = {
     1: {
