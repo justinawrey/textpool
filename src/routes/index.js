@@ -8,6 +8,6 @@ export default (
     <Switch>
         <Route exact path={'/'} component={Main} />
         <Route exact to={'/login'} component={Login} />
-        <Route render={() => <Redirect to="/" />} />
+        <Route render={() => <Redirect to="/login" />} />
     </Switch>
 )
