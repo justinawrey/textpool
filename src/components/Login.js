@@ -1,17 +1,16 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
 export default class Login extends Component {
     componentDidMount() {
-        fetch("http://localhost:5000/api/login", {
-            mode: "cors"
-        })
-            .then(res => console.log(res))
-            // .then(text => {
-            //     console.log(text);
-            //     this.setState({
-            //         text
-            //     });
-            // });
+        fetch('http://localhost:5000/api/login', {
+            mode: 'cors',
+        }).then(res => console.log(res))
+        // .then(text => {
+        //     console.log(text);
+        //     this.setState({
+        //         text
+        //     });
+        // });
     }
 
     render() {
