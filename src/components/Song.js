@@ -1,6 +1,6 @@
-import React from "react";
-import styled, { keyframes } from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react'
+import styled, { keyframes } from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const fadeTo = color => keyframes`
     to { color: ${color}};
@@ -13,10 +13,9 @@ const growTo = size => keyframes`
 const Song = styled.div`
     background-color: ${({ theme, active }) =>
         active ? theme.secondary.med : theme.secondary.light};
-    color: ${({ theme, active }) => (active ? "black" : theme.primary.dark)};
-    font-size: ${({ active }) => active && "1.2em"};
+    color: ${({ theme, active }) => (active ? 'black' : theme.primary.dark)};
+    font-size: ${({ active }) => active && '1.2em'};
     padding: 0.3em;
-    margin: 0.3em;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,7 +45,7 @@ const Song = styled.div`
         background-color: ${({ theme }) => theme.secondary.med};
         animation: ${growTo('1.2em')} 0.1s ease-in forwards;
     }
-`;
+`
 
 export default ({
     song,
@@ -54,24 +53,28 @@ export default ({
     active,
     selectCurrent,
     removeCurrent,
-    pauseCurrent
+    pauseCurrent,
 }) => (
     <Song active={active} onClick={() => selectCurrent()}>
         <div>
             <h3>{song}</h3>
             {artist}
         </div>
-        {active ? <FontAwesomeIcon icon='pause'/> : <FontAwesomeIcon icon='play'/>}
+        {active ? (
+            <FontAwesomeIcon icon="pause" />
+        ) : (
+            <FontAwesomeIcon icon="play" />
+        )}
         <div
             onClick={e => {
                 if (active) {
-                    pauseCurrent();
+                    pauseCurrent()
                 }
-                removeCurrent();
-                e.stopPropagation();
+                removeCurrent()
+                e.stopPropagation()
             }}
         >
-            <FontAwesomeIcon size='lg' icon='times'/>
+            <FontAwesomeIcon size="lg" icon="times" />
         </div>
     </Song>
-);
+)

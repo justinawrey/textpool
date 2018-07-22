@@ -1,25 +1,35 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
-import { connect } from "react-redux";
-
-import SongContainer from "../containers/SongContainer";
-
-const StyledSongList = styled.ul`
-    padding: 0.1em 0em 0.1em 0em;
-    background-color: ${({ theme }) => theme.secondary.dark};
-`;
+import React from 'react'
+import styled, { keyframes } from 'styled-components'
+import { connect } from 'react-redux'
+import SongContainer from '../containers/SongContainer'
 
 const pulse = keyframes`
     0% {font-size: 1em;}
-    50% {font-size: 1.2em;}
+    50% {font-size: 1.2em;}j
     100% {font-size: 1em;}
-`;
+`
+
+const StyledSongList = styled.div`
+    > div {
+        border-width: 0.2em 0.4em 0.2em 0.4em;
+        border-style: solid;
+        border-color: ${({ theme }) => theme.secondary.dark};
+    }
+
+    > div:first-child {
+        border-top: 0.4em solid ${({ theme }) => theme.secondary.dark};
+    }
+
+    > div:last-child {
+        border-bottom: 0.4em solid ${({ theme }) => theme.secondary.dark};
+    }
+`
 
 const NoSongs = styled.div`
     text-align: center;
     background-color: ${({ theme }) => theme.secondary.dark};
     animation: ${pulse} 3s ease-in-out infinite;
-`;
+`
 
 const SongList = ({ songs }) =>
     songs.length > 0 ? (
@@ -31,6 +41,6 @@ const SongList = ({ songs }) =>
             <h1>awww shit... there's nothing here!</h1>
             waiting for new songs to be queued...
         </NoSongs>
-    );
+    )
 
-export default connect(state => ({ songs: state.songs }))(SongList);
+export default connect(state => ({ songs: state.songs }))(SongList)
