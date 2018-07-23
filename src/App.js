@@ -11,6 +11,16 @@ injectGlobal`
         background-color: ${Lettuce.primary.dark};
         height: 100%;
         width: 100%;
+
+    }
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background-color: ${Lettuce.primary.light};
     }
 `
 
