@@ -11,6 +11,8 @@
 
 # production
 /build
+/public
+/.vscode
 
 # misc
 .eslintrc.json
