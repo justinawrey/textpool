@@ -1,31 +1,33 @@
 import React from 'react'
 import styled from 'styled-components'
+import posed from 'react-pose'
 import { connect } from 'react-redux'
 import Spinner from './Spinner'
-import SongContainer from '../containers/SongContainer'
+import Song from './Song'
 
-const StyledSongList = styled.div`
+const SlideInList = posed.div({
+    visible: {
+        x: '0%',
+        delayChildren: 200,
+        staggerChildren: 50,
+    },
+    hidden: {
+        x: '-100%',
+    },
+})
+
+const StyledSongList = styled(SlideInList)`
     margin: 0 15% 0 15%;
-
-    > div {
-        border-width: 0.2em 0.4em 0.2em 0.4em;
-        border-style: solid;
-        border-color: ${({ theme }) => theme.secondary.dark};
-    }
-
-    > div:first-child {
-        border-top-width: 0.4em;
-    }
-
-    > div:last-child {
-        border-bottom-width: 0.4em;
-    }
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
+    border-radius: 0.3em;
+    background-color: ${({ theme }) => theme.primary.light};
 `
 
 const SongList = ({ songs }) =>
     songs.length > 0 ? (
-        <StyledSongList>
-            {songs.map(id => <SongContainer key={id} id={id} />)}
+        <StyledSongList initialPose="hidden" pose="visible">
+            {songs.map(id => <Song key={id} id={id} />)}
         </StyledSongList>
     ) : (
         <Spinner />
