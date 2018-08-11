@@ -1,13 +1,6 @@
 import React from 'react'
 import posed from 'react-pose'
-import styled, { keyframes } from 'styled-components'
-
-const growAndFadeTo = (size, color) => keyframes`
-    to { 
-        font-size: ${size}
-        color: ${color}
-    };
-`
+import styled from 'styled-components'
 
 const LoginAnimation = posed.h1({
     visible: {

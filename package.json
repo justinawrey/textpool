@@ -1,9 +1,10 @@
 {
     "name": "textpool",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "description": "spotify web queue with sms",
     "main": "index.js",
     "scripts": {
+        "install-all": "npm i && cd client && npm i && cd ..",
         "start": "concurrently \"nodemon --exec babel-node index.js\" \"cd client && npm start\""
     },
     "repository": {
