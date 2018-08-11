@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "install-all": "npm i && cd client && npm i && cd ..",
-        "start": "concurrently \"nodemon --exec babel-node index.js\" \"cd client && npm start\""
+        "start": "concurrently \"nodemon --exec babel-node --require dotenv/config index.js\" \"cd client && npm start\""
     },
     "repository": {
         "type": "git",
@@ -28,12 +28,14 @@
     "homepage": "https://github.com/justinawrey/textpool#readme",
     "dependencies": {
         "express": "^4.16.3",
+        "express-session": "^1.15.6",
         "morgan": "^1.9.0"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
         "babel-preset-env": "^1.7.0",
         "concurrently": "^3.6.1",
+        "dotenv": "^6.0.0",
         "nodemon": "^1.18.3"
     }
 }

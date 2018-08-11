@@ -8,8 +8,8 @@ coverage/
 
 # production
 build/
-public/
 .vscode/
+.env/
 
 # misc
 .eslintrc.json
