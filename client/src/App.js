@@ -6,21 +6,33 @@ import Lettuce from './themes'
 import Routes from './routes'
 
 injectGlobal`
+
     html {
         font-family: 'Courier New', Courier, monospace;
         background-color: ${Lettuce.primary.dark};
-        height: 100%;
         width: 100%;
-
+        height: 100%;
+        display: flex;
     }
+
+    body {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+    }
+
+    #root {
+        flex: 1;
+    }
+
     ::-webkit-scrollbar {
-        width: 12px;
+        width: 8px;
     }
 
     ::-webkit-scrollbar-thumb {
         border-radius: 10px;
         -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-        background-color: ${Lettuce.primary.light};
+        background-color: ${Lettuce.primary.dark};
     }
 `
 

@@ -1,19 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import posed from 'react-pose'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 
 /* Presentational Component */
-
-const fadeTo = color => keyframes`
-    to { color: ${color}};
-`
-
-const growTo = size => keyframes`
-    to { font-size: ${size}};
-`
 
 const SlideIn = posed.div({
     visible: {
@@ -30,94 +22,72 @@ const StyledSong = styled(SlideIn)`
     background-color: ${({ theme, active }) =>
         active ? theme.secondary.med : theme.secondary.light};
     color: ${({ theme, active }) => (active ? 'black' : theme.primary.dark)};
-    font-size: ${({ active }) => active && '1.2em'};
+    font-size: ${({ active }) => (active ? '1.1em' : '1em')};
     padding: 0.3em 0.3em 0.3em 1em;
-    margin: 0.5em;
-    border-radius: 0.3em;
+    margin: ${({ theme }) => `${theme.baseMargin}px`};
+    border-radius: ${({ theme }) => `${theme.baseRadius / 2}px`};
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: font-size 0.1s ease-in;
 
     div:first-child {
         margin-right: auto;
+        font-size: 0.8em;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
-    svg:nth-child(2) {
+    svg:last-child {
+        margin: -1.6em -0.1em 0em 1em;
+        transition: color 0.2s ease-in;
+        display: none;
+
         &:hover {
-            animation: ${fadeTo('darkgreen')} 0.3s ease-in forwards;
+            color: red;
         }
     }
 
-    div:last-child {
-        margin: 0em 1em 0em 1em;
-        &:hover {
-            animation: ${fadeTo('red')} 0.3s ease-in forwards;
-        }
-    }
-
-    h3 {
-        margin: 0;
+    &:hover svg:last-child {
+        display: block;
     }
 
     &:hover {
         background-color: ${({ theme }) => theme.secondary.med};
-        animation: ${growTo('1.2em')} 0.1s ease-in forwards;
+        font-size: 1.1em;
+        color: black;
     }
 `
 
-const Song = ({
-    song,
-    artist,
-    active,
-    playing,
-    selectCurrent,
-    removeCurrent,
-    pauseCurrent,
-}) => (
+const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
     <StyledSong
         active={active}
         onClick={() => selectCurrent()}
         initialPose="hidden"
     >
         <div>
-            <h3>{song}</h3>
-            {artist}
+            {song}
+            <br />
+            <strong>{artist}</strong>
         </div>
-        {active &&
-            (playing ? (
-                <FontAwesomeIcon
-                    icon="pause"
-                    onClick={e => {
-                        pauseCurrent()
-                        e.stopPropagation()
-                    }}
-                />
-            ) : (
-                <FontAwesomeIcon icon="play" onClick={() => selectCurrent()} />
-            ))}
-        <div
+        <FontAwesomeIcon
             onClick={e => {
-                if (active) {
-                    pauseCurrent()
-                }
                 removeCurrent()
                 e.stopPropagation()
             }}
-        >
-            <FontAwesomeIcon size="lg" icon="times" />
-        </div>
+            size="xs"
+            icon="times"
+        />
     </StyledSong>
 )
 
 /* Container logic */
 
 const mapStateToProps = (state, ownProps) => {
-    const { song, artist, playing } = state.meta[ownProps.id]
-    const songs = state.songs
+    const { song, artist } = state.meta[ownProps.id]
     return {
         active: ownProps.id === state.active,
-        playing,
-        songs,
         song,
         artist,
     }
@@ -130,16 +100,17 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
     },
     removeCurrent: () => dispatch(removeSong(ownProps.id)),
     pauseCurrent: () => dispatch(pauseSong(ownProps.id)),
-    pauseSong: id => dispatch(pauseSong(id)),
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
-    selectCurrent: () => {
-        stateProps.songs.forEach(id => dispatchProps.pauseSong(id))
-        dispatchProps.selectCurrent()
+    removeCurrent: () => {
+        if (stateProps.active) {
+            dispatchProps.pauseCurrent()
+        }
+        dispatchProps.removeCurrent()
     },
 })
 

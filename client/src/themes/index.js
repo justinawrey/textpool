@@ -7,8 +7,8 @@ export default {
         light: '#D1FFD7',
         med: '#B3FFB3',
         dark: '#A6D3A0',
+        vdark: '#A3D097',
     },
-    r: 65,
-    g: 83,
-    b: 63,
+    baseMargin: 3,
+    baseRadius: 10,
 }
