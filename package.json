@@ -4,8 +4,9 @@
     "description": "spotify web queue with sms",
     "main": "index.js",
     "scripts": {
+        "server": "nodemon --exec babel-node index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
-        "start": "concurrently \"nodemon --exec babel-node --require dotenv/config index.js\" \"cd client && npm start\""
+        "start": "concurrently \"nodemon --exec babel-node index.js\" \"cd client && npm start\""
     },
     "repository": {
         "type": "git",
@@ -29,7 +30,11 @@
     "dependencies": {
         "express": "^4.16.3",
         "express-session": "^1.15.6",
-        "morgan": "^1.9.0"
+        "express-ws": "^4.0.0",
+        "morgan": "^1.9.0",
+        "socket.io": "^2.1.1",
+        "spotify-web-api-node": "^3.1.1",
+        "uuid": "^3.3.2"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

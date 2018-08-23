@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import styled from 'styled-components'
 import posed from 'react-pose'
+import socket from 'socket.io-client'
+
 import SongList from './SongList'
 import Code from './Code'
 import Playing from './Playing'
@@ -80,18 +82,42 @@ const RightPanelBottom = styled(FadeIn)`
     margin-top: ${({ theme }) => `${theme.baseMargin}px`};
 `
 
-export default () => (
-    <Container>
-        <PanelLeft initialPose="hidden" pose="visible">
-            <SongList />
-        </PanelLeft>
-        <PanelRight>
-            <RightPanelTop initialPose="hidden" pose="visible">
-                <Code />
-            </RightPanelTop>
-            <RightPanelBottom initialPose="hidden" pose="visible">
-                <Playing />
-            </RightPanelBottom>
-        </PanelRight>
-    </Container>
-)
+export default class extends Component {
+    componentDidMount() {
+        // save log-in stage in localstorage so user can close window
+        localStorage.setItem('loggedIn', true)
+
+        // and then set up websocket
+        const host = 'http://localhost:3001'
+        this.socket = socket(host)
+        this.socket.on('connect', () => console.log(`connected to ${host}`))
+        this.socket.on('new song', data => console.log(`new song ${data}`))
+        this.socket.on('disconnect', () =>
+            console.log(`disconnected from ${host}`),
+        )
+    }
+
+    componentWillUnmount() {
+        this.socket.close()
+    }
+
+    render() {
+        const { match } = this.props
+        const { code } = match.params
+        return (
+            <Container>
+                <PanelLeft initialPose="hidden" pose="visible">
+                    <SongList />
+                </PanelLeft>
+                <PanelRight>
+                    <RightPanelTop initialPose="hidden" pose="visible">
+                        <Code code={code} />
+                    </RightPanelTop>
+                    <RightPanelBottom initialPose="hidden" pose="visible">
+                        <Playing />
+                    </RightPanelBottom>
+                </PanelRight>
+            </Container>
+        )
+    }
+}

@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { ThemeProvider, injectGlobal } from 'styled-components'
-import { BrowserRouter as Router } from 'react-router-dom'
+import { Router, Route, Redirect } from 'react-router-dom'
 
+import history from './routes/history'
 import Lettuce from './themes'
-import Routes from './routes'
+import Main from './components/Main'
+import Login from './components/Login'
 
 injectGlobal`
 
@@ -36,8 +38,14 @@ injectGlobal`
     }
 `
 
-export default () => (
+export default ({ code }) => (
     <ThemeProvider theme={Lettuce}>
-        <Router>{Routes}</Router>
+        <Router history={history}>
+            <Fragment>
+                <Route exact path={'/'} component={Login} />
+                <Route exact path={'/login'} component={Login} />
+                <Route exact path={'/room/:code'} component={Main} />
+            </Fragment>
+        </Router>
     </ThemeProvider>
 )

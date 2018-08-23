@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { Component } from 'react'
 import posed from 'react-pose'
 import styled from 'styled-components'
+import axios from 'axios'
+import { Redirect } from 'react-router-dom'
 
-const LoginAnimation = posed.h1({
+import Spinner from './Spinner'
+
+const LoginAnimation = posed.a({
     visible: {
         opacity: 1,
         y: 0,
@@ -23,7 +27,7 @@ const LoginButton = styled.div`
     height: 100%;
     width: 100%;
 
-    h1 {
+    a {
         display: flex;
         align-items: center;
         background-color: ${({ theme }) => theme.secondary.light};
@@ -32,6 +36,8 @@ const LoginButton = styled.div`
         border: 0.2em solid ${({ theme }) => theme.secondary.dark};
         color: ${({ theme }) => theme.primary.light};
         font-size: 2em;
+        text-decoration: none;
+        font-weight: bold;
         transition: font-size 0.1s ease-in, color 0.1s ease-in;
 
         :hover {
@@ -42,10 +48,55 @@ const LoginButton = styled.div`
     }
 `
 
-export default () => (
-    <LoginButton>
-        <LoginAnimation initialPose="hidden" pose="visible">
-            Login with Spotify
-        </LoginAnimation>
-    </LoginButton>
-)
+export default class extends Component {
+    constructor(props) {
+        super(props)
+        const loggedIn = localStorage.getItem('loggedIn') || false
+        this.state = {
+            fetching: loggedIn,
+            code: null,
+            loggedIn,
+        }
+    }
+
+    componentDidMount() {
+        const { fetching } = this.state
+
+        if (fetching) {
+            // fake spinner for 1 second
+            setTimeout(async () => {
+                let room
+                try {
+                    room = await axios.get('/api/room')
+                } catch (e) {
+                    console.error(e)
+                    this.setState({ fetching: false })
+                    return
+                }
+                this.setState({ fetching: false, code: room.data.room })
+            }, 1000)
+        }
+    }
+
+    render() {
+        const { fetching, code, loggedIn } = this.state
+
+        return (
+            <LoginButton>
+                {fetching ? (
+                    <Spinner round />
+                ) : loggedIn ? (
+                    <Redirect to={`/room/${code}`} />
+                ) : (
+                    <LoginAnimation
+                        initialPose="hidden"
+                        pose="visible"
+                        href="http://localhost:3001/api/login"
+                    >
+                        Login with Spotify
+                    </LoginAnimation>
+                )}
+            </LoginButton>
+        )
+    }
+}
