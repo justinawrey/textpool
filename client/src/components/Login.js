@@ -51,7 +51,13 @@ const LoginButton = styled.div`
 export default class extends Component {
     constructor(props) {
         super(props)
-        const loggedIn = localStorage.getItem('loggedIn') || false
+        let loggedIn = localStorage.getItem('loggedIn') || false
+        if (loggedIn) {
+            const { expires } = JSON.parse(loggedIn)
+            if (Date.now() >= expires) {
+                loggedIn = false
+            }
+        }
         this.state = {
             fetching: loggedIn,
             code: null,

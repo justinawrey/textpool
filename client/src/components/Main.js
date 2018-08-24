@@ -85,7 +85,12 @@ const RightPanelBottom = styled(FadeIn)`
 export default class extends Component {
     componentDidMount() {
         // save log-in stage in localstorage so user can close window
-        localStorage.setItem('loggedIn', true)
+        // set default expiry to 1 hour
+        const loggedIn = {
+            loggedIn: true,
+            expires: Date.now() + 3600000,
+        }
+        localStorage.setItem('loggedIn', JSON.stringify(loggedIn))
 
         // and then set up websocket
         const host = 'http://localhost:3001'
