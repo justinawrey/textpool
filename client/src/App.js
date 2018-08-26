@@ -10,7 +10,8 @@ import Login from './components/Login'
 injectGlobal`
 
     html {
-        font-family: 'Courier New', Courier, monospace;
+        font-family: 'Ropa Sans', sans-serif;
+        letter-spacing: 1px;
         background-color: ${Lettuce.primary.dark};
         width: 100%;
         height: 100%;
