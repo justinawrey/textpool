@@ -3,8 +3,10 @@ import posed from 'react-pose'
 import styled from 'styled-components'
 import axios from 'axios'
 import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import Spinner from './Spinner'
+import { setAllMeta, setSongList } from '../actions'
 
 const LoginAnimation = posed.a({
     visible: {
@@ -48,7 +50,7 @@ const LoginButton = styled.div`
     }
 `
 
-export default class extends Component {
+class Login extends Component {
     constructor(props) {
         super(props)
         let loggedIn = localStorage.getItem('loggedIn') || false
@@ -67,19 +69,27 @@ export default class extends Component {
 
     componentDidMount() {
         const { fetching } = this.state
+        const { setSongList, setAllMeta } = this.props
 
         if (fetching) {
             // fake spinner for 1 second
             setTimeout(async () => {
-                let room
+                let room, songs, meta
                 try {
                     room = await axios.get('/api/room')
+                    songs = await axios.get('/api/songs')
+                    meta = await axios.get('/api/meta')
                 } catch (e) {
                     console.error(e)
                     this.setState({ fetching: false })
                     return
                 }
-                this.setState({ fetching: false, code: room.data.room })
+                setAllMeta(meta.data.meta)
+                setSongList(songs.data.songs)
+                this.setState({
+                    fetching: false,
+                    code: room.data.room,
+                })
             }, 1000)
         }
     }
@@ -106,3 +116,11 @@ export default class extends Component {
         )
     }
 }
+
+export default connect(
+    null,
+    dispatch => ({
+        setSongList: songs => dispatch(setSongList(songs)),
+        setAllMeta: meta => dispatch(setAllMeta(meta)),
+    }),
+)(Login)

@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import posed from 'react-pose'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
+import Spinner from './Spinner'
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 
 /* Presentational Component */
@@ -60,36 +62,77 @@ const StyledSong = styled(SlideIn)`
     }
 `
 
-const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
-    <StyledSong
-        active={active}
-        onClick={() => selectCurrent()}
-        initialPose="hidden"
-    >
-        <div>
-            {song}
-            <br />
-            <strong>{artist}</strong>
-        </div>
-        <FontAwesomeIcon
-            onClick={e => {
-                removeCurrent()
-                e.stopPropagation()
-            }}
-            size="xs"
-            icon="times"
-        />
-    </StyledSong>
-)
+class Song extends Component {
+    constructor(props) {
+        super(props)
+        const { spinIn } = this.props
+        this.state = {
+            incoming: spinIn,
+        }
+    }
+
+    static get defaultProps() {
+        return {
+            spinIn: true,
+        }
+    }
+
+    componentDidMount() {
+        const { incoming } = this.state
+        if (incoming) {
+            // spin for a second when a song comes in
+            setTimeout(() => this.setState({ incoming: false }), 1000)
+        }
+    }
+
+    render() {
+        const {
+            song,
+            artist,
+            active,
+            selectCurrent,
+            removeCurrent,
+        } = this.props
+        const { incoming } = this.state
+
+        return incoming ? (
+            <SlideIn initialPose="hidden" pose="visible">
+                <Spinner />
+            </SlideIn>
+        ) : (
+            <StyledSong
+                active={active}
+                onClick={() => selectCurrent()}
+                initialPose="hidden"
+                pose="visible"
+            >
+                <div>
+                    {song}
+                    <br />
+                    <strong>{artist}</strong>
+                </div>
+                <FontAwesomeIcon
+                    onClick={e => {
+                        removeCurrent()
+                        e.stopPropagation()
+                    }}
+                    size="xs"
+                    icon="times"
+                />
+            </StyledSong>
+        )
+    }
+}
 
 /* Container logic */
 
 const mapStateToProps = (state, ownProps) => {
-    const { song, artist } = state.meta[ownProps.id]
+    const { song, artist, spinIn } = state.meta[ownProps.id]
     return {
         active: ownProps.id === state.active,
         song,
         artist,
+        spinIn: spinIn,
     }
 }
 

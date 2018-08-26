@@ -1,13 +1,7 @@
 import { combineReducers } from 'redux'
-import { SongActions } from '../actions'
-import {
-    initialSongs,
-    initialMeta,
-    initialActive,
-    initialPlaying,
-} from './initial'
+import { SongActions, MetaActions } from '../actions'
 
-const songs = (state = initialSongs, action) => {
+const songs = (state = [], action) => {
     switch (action.type) {
         case SongActions.QUEUE_SONG:
             return [...state, action.id]
@@ -17,21 +11,32 @@ const songs = (state = initialSongs, action) => {
             const removed = [...state]
             removed.splice(removed.indexOf(action.id), 1)
             return removed
+        case SongActions.SET_SONG_LIST:
+            return action.songs
         default:
             return state
     }
 }
 
 // object of song metadata by id
-const meta = (state = initialMeta, action) => {
+const meta = (state = {}, action) => {
     switch (action.type) {
+        case MetaActions.SET_ALL_META:
+            return Object.keys(action.allMeta).reduce((res, key) => {
+                res[key] = { ...action.allMeta[key], spinIn: false }
+                return res
+            }, {})
+        case MetaActions.SET_META:
+            const newMeta = { ...state }
+            newMeta[action.id] = action.meta
+            return newMeta
         default:
             return state
     }
 }
 
 // current active song by id
-const active = (state = initialActive, action) => {
+const active = (state = 0, action) => {
     switch (action.type) {
         case SongActions.SELECT_SONG:
             return action.id
@@ -41,7 +46,7 @@ const active = (state = initialActive, action) => {
 }
 
 // whether or not current song is playing -> bool
-const playing = (state = initialPlaying, action) => {
+const playing = (state = false, action) => {
     switch (action.type) {
         case SongActions.PLAY_SONG:
             return true

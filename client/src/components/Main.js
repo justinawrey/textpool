@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import styled from 'styled-components'
 import posed from 'react-pose'
 import socket from 'socket.io-client'
+import { connect } from 'react-redux'
 
 import SongList from './SongList'
 import Code from './Code'
 import Playing from './Playing'
+import { setMeta, queueSong } from '../actions'
 
 /* Animations */
 
@@ -82,8 +84,10 @@ const RightPanelBottom = styled(FadeIn)`
     margin-top: ${({ theme }) => `${theme.baseMargin}px`};
 `
 
-export default class extends Component {
+class Main extends Component {
     componentDidMount() {
+        const { match, queueSong } = this.props
+        const { code } = match.params
         // save log-in stage in localstorage so user can close window
         // set default expiry to 1 hour
         const loggedIn = {
@@ -96,7 +100,7 @@ export default class extends Component {
         const host = 'http://localhost:3001'
         this.socket = socket(host)
         this.socket.on('connect', () => console.log(`connected to ${host}`))
-        this.socket.on('new song', data => console.log(`new song ${data}`))
+        this.socket.on(code, songData => queueSong(songData))
         this.socket.on('disconnect', () =>
             console.log(`disconnected from ${host}`),
         )
@@ -126,3 +130,13 @@ export default class extends Component {
         )
     }
 }
+
+export default connect(
+    null,
+    dispatch => ({
+        queueSong: ({ id, ...rest }) => {
+            dispatch(setMeta(id, rest))
+            dispatch(queueSong(id))
+        },
+    }),
+)(Main)

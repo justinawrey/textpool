@@ -6,6 +6,7 @@ export const SongActions = {
     SELECT_SONG: 'SELECT_SONG',
     PLAY_SONG: 'PLAY_SONG',
     PAUSE_SONG: 'PAUSE_SONG',
+    SET_SONG_LIST: 'SONGS',
 }
 
 // add song to back of queue
@@ -40,4 +41,28 @@ export const playSong = id => ({
 export const pauseSong = id => ({
     type: SongActions.PAUSE_SONG,
     id,
+})
+
+// set the entire song list
+export const setSongList = songs => ({
+    type: SongActions.SET_SONG_LIST,
+    songs,
+})
+
+export const MetaActions = {
+    SET_ALL_META: 'SET_ALL_META',
+    SET_META: 'SET_META',
+}
+
+// set the entire song meta
+export const setAllMeta = allMeta => ({
+    type: MetaActions.SET_ALL_META,
+    allMeta,
+})
+
+// set a single song meta
+export const setMeta = (id, meta) => ({
+    type: MetaActions.SET_META,
+    id,
+    meta,
 })

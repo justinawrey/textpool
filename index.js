@@ -1,5 +1,6 @@
 import express from 'express'
 import morgan from 'morgan'
+import bodyParser from 'body-parser'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -7,6 +8,7 @@ import uuidv4 from 'uuid/v4'
 import spotify from 'spotify-web-api-node'
 import { createServer } from 'http'
 import socket from 'socket.io'
+import twilio from 'twilio'
 
 // config from env
 dotenv.config()
@@ -26,15 +28,21 @@ const spotifyClient = new spotify({
     redirectUri: process.env.REDIRECT_URI,
 })
 
+// session object
 const userSession = session({
     secret: app.get('sessSecret'),
     resave: false,
     saveUninitialized: true,
 })
 
+// this needs to be replaced with Redis in future...
+// sufficient for testing right now though
+const store = {}
+
 // init middleware
 app.use(morgan('tiny'))
     .use(express.json())
+    .use(bodyParser.urlencoded())
     .use(userSession)
 
 // serve static files (i.e. react app) only in a production environment
@@ -72,8 +80,44 @@ app.get('/spotify-callback', async (req, res, next) => {
 
     spotifyClient.setAccessToken(data.body['access_token'])
     spotifyClient.setRefreshToken(data.body['refresh_token'])
-    req.session.room = uuidv4()
+    req.session.room = 'testroom'
+    store['testroom'] = { songs: [], meta: {} }
     res.redirect(`http://localhost:3000/room/${req.session.room}`)
+})
+
+// twilio webhook
+app.post('/sms', async (req, res, next) => {
+    const { Body, From } = req.body
+    let [room, ...search] = Body.split(/\s+/)
+    search = search.join(' ')
+
+    let tracks
+    try {
+        tracks = await spotifyClient.searchTracks(search)
+    } catch (e) {
+        return next(e)
+    }
+
+    const bestMatch = tracks.body.tracks.items[0],
+        { name, uri } = bestMatch,
+        artist = bestMatch.artists[0].name,
+        album = bestMatch.album.name
+
+    const id = uuidv4()
+    const songMeta = { id, song: name, artist, album, uri, from: From }
+
+    // emit through websocket
+    io.emit(room, songMeta)
+
+    // save to development store
+    store[room].songs.push(id)
+    store[room].meta[id] = songMeta
+
+    // send a response
+    const twiml = new twilio.twiml.MessagingResponse()
+    twiml.message(`\nRequest received!\nSong: ${name}\nArtist: ${artist}`)
+    res.writeHead(200, { 'Content-Type': 'text/xml' })
+    res.end(twiml.toString())
 })
 
 // all the rest of the api endpoints required a room to be hit
@@ -91,21 +135,16 @@ app.get('/api/room', (req, res) => {
     res.status(200).json({ room })
 })
 
-app.get('/api/song/:title', async (req, res, next) => {
-    let tracks
-    const { title } = req.params
-    try {
-        tracks = await spotifyClient.searchTracks(title)
-    } catch (e) {
-        return next(e)
-    }
+app.get('/api/songs', (req, res) => {
+    const { room } = req.session
+    const songs = store[room].songs
+    res.status(200).json({ songs })
+})
 
-    const bestMatch = tracks.body.tracks.items[0],
-        { name, uri } = bestMatch,
-        artist = bestMatch.artists[0].name,
-        album = bestMatch.album.name
-
-    res.status(200).json({ name, artist, album, uri })
+app.get('/api/meta', (req, res) => {
+    const { room } = req.session
+    const meta = store[room].meta
+    res.status(200).json({ meta })
 })
 
 app.get('/api/play/:uri', async (req, res, next) => {
