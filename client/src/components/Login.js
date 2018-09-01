@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import posed from 'react-pose'
 import styled from 'styled-components'
 import axios from 'axios'
 import { Redirect } from 'react-router-dom'
@@ -7,20 +6,6 @@ import { connect } from 'react-redux'
 
 import Spinner from './Spinner'
 import { setAllMeta, setSongList } from '../actions'
-
-const LoginAnimation = posed.a({
-    visible: {
-        opacity: 1,
-        y: 0,
-        transition: {
-            duration: 1000,
-        },
-    },
-    hidden: {
-        opacity: 0,
-        y: 20,
-    },
-})
 
 const LoginButton = styled.div`
     display: flex;
@@ -53,17 +38,19 @@ const LoginButton = styled.div`
 class Login extends Component {
     constructor(props) {
         super(props)
-        let loggedIn = localStorage.getItem('loggedIn') || false
-        if (loggedIn) {
-            const { expires } = JSON.parse(loggedIn)
-            if (Date.now() >= expires) {
-                loggedIn = false
-            }
-        }
+        // let loggedIn = localStorage.getItem('loggedIn') || false
+        // if (loggedIn) {
+        //     const { expires } = JSON.parse(loggedIn)
+        //     if (Date.now() >= expires) {
+        //         loggedIn = false
+        //     }
+        // }
         this.state = {
-            fetching: loggedIn,
+            // fetching: loggedIn,
+            fetching: true,
             code: null,
-            loggedIn,
+            // loggedIn,
+            loggedIn: false,
         }
     }
 

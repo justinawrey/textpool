@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
 import { ThemeProvider, injectGlobal } from 'styled-components'
-import { Router, Route, Redirect } from 'react-router-dom'
+import { Router, Route } from 'react-router-dom'
 
-import history from './routes/history'
+import history from './history'
 import Lettuce from './themes'
 import Main from './components/Main'
 import Login from './components/Login'

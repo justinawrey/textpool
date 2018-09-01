@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import posed from 'react-pose'
+import { PoseGroup } from 'react-pose'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
@@ -9,21 +9,10 @@ import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 
 /* Presentational Component */
 
-const SlideIn = posed.div({
-    visible: {
-        opacity: 1,
-        y: 0,
-    },
-    hidden: {
-        opacity: 0,
-        y: 20,
-    },
-})
-
-const StyledSong = styled(SlideIn)`
+const StyledSong = styled.div`
     background-color: ${({ theme, active }) =>
         active ? theme.secondary.med : theme.secondary.light};
-    color: ${({ theme, active }) => (active ? 'black' : theme.primary.dark)};
+    color: ${({ theme, active }) => (active ? 'black' : theme.primary.light)};
     font-size: ${({ active }) => (active ? '1.1em' : '1em')};
     padding: 0.3em 0.3em 0.3em 1em;
     margin: ${({ theme }) => `${theme.baseMargin}px`};
@@ -81,7 +70,7 @@ class Song extends Component {
         const { incoming } = this.state
         if (incoming) {
             // spin for a second when a song comes in
-            setTimeout(() => this.setState({ incoming: false }), 1000)
+            setTimeout(() => this.setState({ incoming: false }), 5000)
         }
     }
 
@@ -95,31 +84,43 @@ class Song extends Component {
         } = this.props
         const { incoming } = this.state
 
-        return incoming ? (
-            <SlideIn initialPose="hidden" pose="visible">
-                <Spinner />
-            </SlideIn>
-        ) : (
-            <StyledSong
-                active={active}
-                onClick={() => selectCurrent()}
-                initialPose="hidden"
-                pose="visible"
-            >
-                <div>
-                    {song}
-                    <br />
-                    <strong>{artist}</strong>
-                </div>
-                <FontAwesomeIcon
-                    onClick={e => {
-                        removeCurrent()
-                        e.stopPropagation()
-                    }}
-                    size="xs"
-                    icon="times"
-                />
-            </StyledSong>
+        return (
+            <div>
+                <PoseGroup
+                    animateOnMount
+                    preEnterPose="beforeFade"
+                    enterPose="fadeIn"
+                    exitPose="fadeOut"
+                >
+                    {incoming && (
+                        <FadeInOut delay={1000} duration={400}>
+                            <Spinner />
+                        </FadeInOut>
+                    )}
+                    {!incoming && (
+                        <FadeInOut delay={5000}>
+                            <StyledSong
+                                active={active}
+                                onClick={() => selectCurrent()}
+                            >
+                                <div>
+                                    {song}
+                                    <br />
+                                    <strong>{artist}</strong>
+                                </div>
+                                <FontAwesomeIcon
+                                    onClick={e => {
+                                        removeCurrent()
+                                        e.stopPropagation()
+                                    }}
+                                    size="xs"
+                                    icon="times"
+                                />
+                            </StyledSong>
+                        </FadeInOut>
+                    )}
+                </PoseGroup>
+            </div>
         )
     }
 }
