@@ -5,13 +5,27 @@ import { Provider } from 'react-redux'
 import { createLogger } from 'redux-logger'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes, faMobileAlt } from '@fortawesome/free-solid-svg-icons'
+import {
+    faTimes,
+    faMobileAlt,
+    faForward,
+    faBackward,
+    faPlayCircle,
+    faPauseCircle,
+} from '@fortawesome/free-solid-svg-icons'
 
 import App from './App'
 import rootReducer from './reducers'
 import registerServiceWorker from './registerServiceWorker'
 
-library.add(faTimes, faMobileAlt)
+library.add(
+    faTimes,
+    faMobileAlt,
+    faForward,
+    faBackward,
+    faPlayCircle,
+    faPauseCircle,
+)
 const store = createStore(rootReducer, applyMiddleware(createLogger()))
 
 ReactDOM.render(

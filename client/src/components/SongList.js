@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { connect } from 'react-redux'
 
 import Song from './Song'
+import { SlideFromLeft } from '../animations'
 
 const StyledList = styled(SlideFromLeft)`
     padding: ${({ theme }) => `${theme.baseMargin2}px`};

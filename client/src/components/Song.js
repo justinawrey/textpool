@@ -1,15 +1,14 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
-import { PoseGroup } from 'react-pose'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-import Spinner from './Spinner'
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
+import { FadeIn } from '../animations'
 
 /* Presentational Component */
 
-const StyledSong = styled.div`
+const StyledSong = styled(FadeIn)`
     background-color: ${({ theme, active }) =>
         active ? theme.secondary.med : theme.secondary.light};
     color: ${({ theme, active }) => (active ? 'black' : theme.primary.light)};
@@ -50,80 +49,29 @@ const StyledSong = styled.div`
         color: black;
     }
 `
-
-class Song extends Component {
-    constructor(props) {
-        super(props)
-        const { spinIn } = this.props
-        this.state = {
-            incoming: spinIn,
-        }
-    }
-
-    static get defaultProps() {
-        return {
-            spinIn: true,
-        }
-    }
-
-    componentDidMount() {
-        const { incoming } = this.state
-        if (incoming) {
-            // spin for a second when a song comes in
-            setTimeout(() => this.setState({ incoming: false }), 5000)
-        }
-    }
-
-    render() {
-        const {
-            song,
-            artist,
-            active,
-            selectCurrent,
-            removeCurrent,
-        } = this.props
-        const { incoming } = this.state
-
-        return (
-            <div>
-                <PoseGroup
-                    animateOnMount
-                    preEnterPose="beforeFade"
-                    enterPose="fadeIn"
-                    exitPose="fadeOut"
-                >
-                    {incoming && (
-                        <FadeInOut delay={1000} duration={400}>
-                            <Spinner />
-                        </FadeInOut>
-                    )}
-                    {!incoming && (
-                        <FadeInOut delay={5000}>
-                            <StyledSong
-                                active={active}
-                                onClick={() => selectCurrent()}
-                            >
-                                <div>
-                                    {song}
-                                    <br />
-                                    <strong>{artist}</strong>
-                                </div>
-                                <FontAwesomeIcon
-                                    onClick={e => {
-                                        removeCurrent()
-                                        e.stopPropagation()
-                                    }}
-                                    size="xs"
-                                    icon="times"
-                                />
-                            </StyledSong>
-                        </FadeInOut>
-                    )}
-                </PoseGroup>
-            </div>
-        )
-    }
-}
+const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
+    <StyledSong
+        active={active}
+        onClick={() => selectCurrent()}
+        initialPose="hidden"
+        pose="visible"
+        duration={1000}
+    >
+        <div>
+            {song}
+            <br />
+            <strong>{artist}</strong>
+        </div>
+        <FontAwesomeIcon
+            onClick={e => {
+                removeCurrent()
+                e.stopPropagation()
+            }}
+            size="xs"
+            icon="times"
+        />
+    </StyledSong>
+)
 
 /* Container logic */
 

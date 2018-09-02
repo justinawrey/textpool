@@ -6,8 +6,9 @@ import { connect } from 'react-redux'
 
 import SongList from './SongList'
 import Playing from './Playing'
-import Notification, { InnerNotification } from './Notification'
+import { Notification, CornerNotification } from './Notification'
 import { setMeta, queueSong } from '../actions'
+import { FadeInOut, FadeIn } from '../animations'
 
 /* Components  */
 
@@ -23,15 +24,6 @@ class Main extends Component {
     componentDidMount() {
         const { match, queueSong } = this.props
         const { code } = match.params
-        // save log-in stage in localstorage so user can close window
-        // set default expiry to 1 hour
-        // const loggedIn = {
-        //     loggedIn: true,
-        //     expires: Date.now() + 3600000,
-        // }
-        // localStorage.setItem('loggedIn', JSON.stringify(loggedIn))
-
-        // and then set up websocket
         const host = 'http://localhost:3001'
         this.socket = socket(host)
         this.socket.on('connect', () => console.log(`connected to ${host}`))
@@ -57,23 +49,16 @@ class Main extends Component {
                     exitPose="fadeOut"
                 >
                     {phase === 'one' && (
-                        // react pose transition bug (?) requires markup to be
-                        // defined this way
-                        <Notification phase="one" key="one">
-                            <InnerNotification phase="one" code={code} />
-                        </Notification>
-                    )}
-                    {phase === 'two' && (
-                        // as above
-                        <Notification delay={2100} phase="two" key="two">
-                            <InnerNotification phase="two" code={code} />
-                        </Notification>
+                        <FadeInOut>
+                            <Notification code={code} key="one" />
+                        </FadeInOut>
                     )}
                 </PoseGroup>
                 {phase === 'two' && (
                     <Fragment>
                         <SongList />
                         <Playing />
+                        <CornerNotification code={code} />
                     </Fragment>
                 )}
             </Container>

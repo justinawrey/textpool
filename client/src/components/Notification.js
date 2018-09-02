@@ -1,6 +1,7 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FadeIn } from '../animations'
 
 const shake = keyframes`
     10%, 90% {
@@ -20,7 +21,7 @@ const shake = keyframes`
     }
 `
 
-export const Indented = styled.span`
+const Indented = styled.span`
     background-color: ${({ theme, phase }) =>
         phase !== 'two' ? theme.secondary.vdark : theme.primary.light};
     padding: ${({ theme }) => `${theme.baseMargin}px`};
@@ -30,34 +31,16 @@ export const Indented = styled.span`
         phase !== 'two' ? 'black' : theme.secondary.light};
 `
 
-export default styled(Notification)`
-    ${({ theme, phase }) =>
-        phase !== 'two'
-            ? css`
-                  box-shadow: ${({ theme }) =>
-                      `0px 0px 0px ${theme.baseRadius}px ${
-                          theme.secondary.dark
-                      }`};
-                  background-color: ${({ theme }) => theme.secondary.light};
-                  border-radius: ${({ theme }) => `${theme.baseRadius}px`};
-                  padding: ${({ theme }) => `${theme.baseMargin * 4}px`};
-                  color: 'black';
-              `
-            : css`
-                  top: 1vh;
-                  right: 1vw;
-                  color: ${({ theme }) => theme.secondary.light};
-              `} font-size: 1em;
+const shared = css`
     transition: font-size 1s ease-in-out;
-    position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-size: 1em;
 
     :hover {
         animation: ${shake} 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-        transform: scale(1.05);
         backface-visibility: hidden;
         perspective: 1000px;
         font-size: 1.1em;
@@ -83,17 +66,51 @@ export default styled(Notification)`
     }
 `
 
-export const InnerNotification = ({ phase, code }) => (
-    <Fragment>
-        {' '}
-        {phase !== 'two' && <h1>There's nothing here!</h1>}
+const StyledNotification = styled.div`
+    box-shadow: ${({ theme }) =>
+        `0px 0px 0px ${theme.baseRadius}px ${theme.secondary.dark}`};
+    background-color: ${({ theme }) => theme.secondary.light};
+    border-radius: ${({ theme }) => `${theme.baseRadius}px`};
+    padding: ${({ theme }) => `${theme.baseMargin * 4}px`};
+    color: 'black';
+    ${shared};
+`
+const StyledCornerNotification = styled(FadeIn)`
+    position: fixed;
+    top: 1vh;
+    right: 1vw;
+    color: ${({ theme }) => theme.secondary.light};
+    ${shared};
+`
+
+export const Notification = ({ code }) => (
+    <StyledNotification>
+        <h1>There's nothing here!</h1>
         <div>
             <FontAwesomeIcon icon="mobile-alt" size="2x" />
             <i>
                 Text{' '}
-                <Indented phase={phase}>{`${code} <song> <artist>`}</Indented>{' '}
-                to <strong>(778) 860-7371</strong>
+                <Indented phase="one">{`${code} <song> <artist>`}</Indented> to{' '}
+                <strong>(778) 860-7371</strong>
             </i>
         </div>
-    </Fragment>
+    </StyledNotification>
+)
+
+export const CornerNotification = ({ code }) => (
+    <StyledCornerNotification
+        initialPose="hidden"
+        pose="visible"
+        delay={3000}
+        duration={1000}
+    >
+        <div>
+            <FontAwesomeIcon icon="mobile-alt" size="2x" />
+            <i>
+                Text{' '}
+                <Indented phase="two">{`${code} <song> <artist>`}</Indented> to{' '}
+                <strong>(778) 860-7371</strong>
+            </i>
+        </div>
+    </StyledCornerNotification>
 )

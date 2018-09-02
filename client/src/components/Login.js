@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import Spinner from './Spinner'
 import { setAllMeta, setSongList } from '../actions'
+import { FadeIn } from '../animations'
 
 const LoginButton = styled.div`
     display: flex;
@@ -91,13 +92,11 @@ class Login extends Component {
                 ) : loggedIn ? (
                     <Redirect to={`/room/${code}`} />
                 ) : (
-                    <LoginAnimation
-                        initialPose="hidden"
-                        pose="visible"
-                        href="http://localhost:3001/api/login"
-                    >
-                        Login with Spotify
-                    </LoginAnimation>
+                    <FadeIn initialPose="hidden" pose="visible" duration={1000}>
+                        <a href="http://localhost:3001/api/login">
+                            Login with Spotify
+                        </a>
+                    </FadeIn>
                 )}
             </LoginButton>
         )
