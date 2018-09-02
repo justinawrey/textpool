@@ -101,8 +101,8 @@ export const CornerNotification = ({ code }) => (
     <StyledCornerNotification
         initialPose="hidden"
         pose="visible"
-        delay={3000}
-        duration={1000}
+        delay={2500}
+        duration={750}
     >
         <div>
             <FontAwesomeIcon icon="mobile-alt" size="2x" />

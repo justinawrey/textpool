@@ -34,7 +34,7 @@ const Playing = styled(FadeIn)`
 `
 
 export default () => (
-    <Playing initialPose="hidden" pose="visible" duration={1000} delay={2000}>
+    <Playing initialPose="hidden" pose="visible" duration={750} delay={1750}>
         <h3>Some Song With a Long Name</h3>
         <h5>Some Artist --- Some Album</h5>
         <div>

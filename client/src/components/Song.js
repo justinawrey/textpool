@@ -55,7 +55,7 @@ const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
         onClick={() => selectCurrent()}
         initialPose="hidden"
         pose="visible"
-        duration={1000}
+        duration={750}
     >
         <div>
             {song}
