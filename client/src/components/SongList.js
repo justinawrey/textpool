@@ -15,7 +15,7 @@ const StyledList = styled(SlideFromLeft)`
     flex: 1;
 `
 
-const SongList = ({ songs, oneSong }) => (
+const SongList = ({ songs }) => (
     <StyledList initialPose="hidden" pose="visible">
         {songs.map(id => (
             <Song key={id} id={id} />
@@ -25,5 +25,4 @@ const SongList = ({ songs, oneSong }) => (
 
 export default connect(state => ({
     songs: state.songs,
-    oneSong: state.songs.length === 1,
 }))(SongList)

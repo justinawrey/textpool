@@ -21,8 +21,19 @@ const StyledSong = styled(FadeIn)`
     align-items: center;
     transition: font-size 0.1s ease-in;
 
-    div:first-child {
-        margin-right: auto;
+    & > div:first-child {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        p {
+            margin: 0px;
+            font-size: 0.8rem;
+        }
+    }
+
+    & > div:first-child > div {
         font-size: 0.8em;
         overflow: hidden;
         white-space: nowrap;
@@ -33,7 +44,6 @@ const StyledSong = styled(FadeIn)`
         margin: -1.6em -0.1em 0em 1em;
         transition: color 0.2s ease-in;
         display: none;
-
         &:hover {
             color: red;
         }
@@ -41,6 +51,7 @@ const StyledSong = styled(FadeIn)`
 
     &:hover svg:last-child {
         display: block;
+        margin-left: 5px;
     }
 
     &:hover {
@@ -49,7 +60,7 @@ const StyledSong = styled(FadeIn)`
         color: black;
     }
 `
-const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
+const Song = ({ song, artist, from, active, selectCurrent, removeCurrent }) => (
     <StyledSong
         active={active}
         onClick={() => selectCurrent()}
@@ -58,9 +69,12 @@ const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
         duration={750}
     >
         <div>
-            {song}
-            <br />
-            <strong>{artist}</strong>
+            <div>
+                {song}
+                <br />
+                <strong>{artist}</strong>
+            </div>
+            <p>{from}</p>
         </div>
         <FontAwesomeIcon
             onClick={e => {
@@ -76,12 +90,12 @@ const Song = ({ song, artist, active, selectCurrent, removeCurrent }) => (
 /* Container logic */
 
 const mapStateToProps = (state, ownProps) => {
-    const { song, artist, spinIn } = state.meta[ownProps.id]
+    const { song, artist, from } = state.meta[ownProps.id]
     return {
         active: ownProps.id === state.active,
         song,
         artist,
-        spinIn: spinIn,
+        from,
     }
 }
 
@@ -90,6 +104,7 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(selectSong(ownProps.id))
         dispatch(playSong(ownProps.id))
     },
+    selectDefault: () => dispatch(selectSong(0)),
     removeCurrent: () => dispatch(removeSong(ownProps.id)),
     pauseCurrent: () => dispatch(pauseSong(ownProps.id)),
 })
@@ -101,6 +116,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     removeCurrent: () => {
         if (stateProps.active) {
             dispatchProps.pauseCurrent()
+            // Set the active song back to a default of none
+            dispatchProps.selectDefault()
         }
         dispatchProps.removeCurrent()
     },

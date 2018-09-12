@@ -101,10 +101,11 @@ app.post('/sms', async (req, res, next) => {
     const bestMatch = tracks.body.tracks.items[0],
         { name, uri } = bestMatch,
         artist = bestMatch.artists[0].name,
-        album = bestMatch.album.name
+        album = bestMatch.album.name,
+        artUrl = bestMatch.album.images[1].url
 
     const id = uuidv4()
-    const songMeta = { id, song: name, artist, album, uri, from: From }
+    const songMeta = { id, song: name, artist, album, uri, artUrl, from: From }
 
     // emit through websocket
     io.emit(room, songMeta)

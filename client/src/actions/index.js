@@ -32,15 +32,13 @@ export const selectSong = id => ({
 })
 
 // play song
-export const playSong = id => ({
+export const playSong = () => ({
     type: SongActions.PLAY_SONG,
-    id,
 })
 
 //  pause song
-export const pauseSong = id => ({
+export const pauseSong = () => ({
     type: SongActions.PAUSE_SONG,
-    id,
 })
 
 // set the entire song list

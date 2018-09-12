@@ -8,7 +8,7 @@ import SongList from './SongList'
 import Playing from './Playing'
 import { Notification, CornerNotification } from './Notification'
 import { setMeta, queueSong } from '../actions'
-import { FadeInOut, FadeIn } from '../animations'
+import { FadeInOut } from '../animations'
 
 /* Components  */
 
@@ -67,13 +67,8 @@ class Main extends Component {
 }
 
 const mapStateToProps = state => {
-    const { songs, active } = state
-    let phase
-    if (songs.length <= 0) {
-        phase = 'one'
-    } else {
-        phase = active === 0 ? 'two' : 'three'
-    }
+    const { songs } = state
+    const phase = songs.length <= 0 ? 'one' : 'two'
 
     return {
         phase,

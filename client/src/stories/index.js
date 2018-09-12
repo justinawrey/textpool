@@ -1,10 +1,7 @@
 import React from 'react'
 import { injectGlobal, ThemeProvider } from 'styled-components'
-
+import { Provider } from 'react-redux'
 import { storiesOf } from '@storybook/react'
-import Playing from '../components/Playing'
-import Lettuce from '../themes'
-
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faTimes,
@@ -12,8 +9,13 @@ import {
     faForward,
     faBackward,
     faPlayCircle,
-    faPause,
+    faPauseCircle,
 } from '@fortawesome/free-solid-svg-icons'
+
+import Playing from '../components/Playing'
+import SongList from '../components/SongList'
+import initialState, { createInitialStore } from './initialStates'
+import Lettuce from '../themes'
 
 injectGlobal`
     html {
@@ -36,10 +38,31 @@ injectGlobal`
     }
 `
 
-library.add(faTimes, faMobileAlt, faForward, faBackward, faPlayCircle, faPause)
+library.add(
+    faTimes,
+    faMobileAlt,
+    faForward,
+    faBackward,
+    faPlayCircle,
+    faPauseCircle,
+)
 
 storiesOf('Playing', module)
     .addDecorator(story => (
-        <ThemeProvider theme={Lettuce}>{story()}</ThemeProvider>
+        <ThemeProvider theme={Lettuce}>
+            <Provider store={createInitialStore(initialState)}>
+                {story()}
+            </Provider>
+        </ThemeProvider>
     ))
     .add('component', () => <Playing />)
+
+storiesOf('Song', module)
+    .addDecorator(story => (
+        <ThemeProvider theme={Lettuce}>
+            <Provider store={createInitialStore(initialState)}>
+                {story()}
+            </Provider>
+        </ThemeProvider>
+    ))
+    .add('component', () => <SongList />)
