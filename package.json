@@ -6,7 +6,7 @@
     "scripts": {
         "server": "nodemon --exec babel-node index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
-        "start": "concurrently \"nodemon --exec babel-node index.js\" \"cd client && npm start\""
+        "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\""
     },
     "repository": {
         "type": "git",

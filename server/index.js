@@ -1,71 +1,23 @@
-import express from 'express'
-import morgan from 'morgan'
-import bodyParser from 'body-parser'
-import session from 'express-session'
 import dotenv from 'dotenv'
-import path from 'path'
-import uuidv4 from 'uuid/v4'
-import spotify from 'spotify-web-api-node'
-import { createServer } from 'http'
-import socket from 'socket.io'
-import twilio from 'twilio'
 
-// config from env
+// config from .env file, do this first so other
+// imports can use process.env on initialization
 dotenv.config()
 
-// app locals
-const app = express()
-const server = createServer(app)
-const io = socket(server)
+// external libs
+import uuidv4 from 'uuid/v4'
+import twilio from 'twilio'
 
-app.set('port', process.env.PORT || 3001)
-app.set('sessSecret', process.env.SESSION_SECRET)
-
-// spotify object
-const spotifyClient = new spotify({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: process.env.REDIRECT_URI,
-})
-
-// session object
-const userSession = session({
-    secret: app.get('sessSecret'),
-    resave: false,
-    saveUninitialized: true,
-})
-
-// this needs to be replaced with Redis in future...
-// sufficient for testing right now though
-const store = {}
-
-// init middleware
-app.use(morgan('tiny'))
-    .use(express.json())
-    .use(bodyParser.urlencoded())
-    .use(userSession)
-
-// serve static files (i.e. react app) only in a production environment
-if (app.get('env') === 'production') {
-    app.use(express.static(path.join(__dirname, 'client', 'build')))
-}
-
-// save session in socket.handshake -> sort of a hack, but works
-io.use((socket, next) => {
-    userSession(socket.handshake, {}, next)
-})
-
-io.on('connection', socket => {
-    console.log(`user has connected: ${socket.handshake.session.id}`)
-    socket.on('disconnect', () =>
-        console.log(`user has disconnected: ${socket.handshake.session.id}`),
-    )
-})
+// local libs
+import app, { server } from './initapp'
+import io from './socket'
+import spotify from './spotify'
+import store from './store'
 
 // next two auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
     const scopes = ['user-modify-playback-state']
-    res.redirect(spotifyClient.createAuthorizeURL(scopes))
+    res.redirect(spotify.createAuthorizeURL(scopes))
 })
 
 // callback for spotify web api
@@ -73,15 +25,17 @@ app.get('/spotify-callback', async (req, res, next) => {
     let data
     const { code } = req.query
     try {
-        data = await spotifyClient.authorizationCodeGrant(code)
+        data = await spotify.authorizationCodeGrant(code)
     } catch (e) {
         return next(e)
     }
 
-    spotifyClient.setAccessToken(data.body['access_token'])
-    spotifyClient.setRefreshToken(data.body['refresh_token'])
+    spotify.setAccessToken(data.body['access_token'])
+    spotify.setRefreshToken(data.body['refresh_token'])
     req.session.room = 'testroom'
     store['testroom'] = { songs: [], meta: {} }
+
+    // TODO: rm hardcode
     res.redirect(`http://localhost:3000/room/${req.session.room}`)
 })
 
@@ -93,7 +47,7 @@ app.post('/sms', async (req, res, next) => {
 
     let tracks
     try {
-        tracks = await spotifyClient.searchTracks(search)
+        tracks = await spotify.searchTracks(search)
     } catch (e) {
         return next(e)
     }
@@ -151,7 +105,7 @@ app.get('/api/meta', (req, res) => {
 app.get('/api/play/:uri', async (req, res, next) => {
     const { uri } = req.params
     try {
-        await spotifyClient.play({
+        await spotify.play({
             context_uri: uri,
         })
     } catch (e) {
@@ -163,7 +117,7 @@ app.get('/api/play/:uri', async (req, res, next) => {
 
 app.get('/api/play', async (req, res, next) => {
     try {
-        await spotifyClient.play()
+        await spotify.play()
     } catch (e) {
         return next(e)
     }
@@ -173,7 +127,7 @@ app.get('/api/play', async (req, res, next) => {
 
 app.get('/api/pause', async (req, res, next) => {
     try {
-        await spotifyClient.pause()
+        await spotify.pause()
     } catch (e) {
         return next(e)
     }
