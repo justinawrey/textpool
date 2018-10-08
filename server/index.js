@@ -10,6 +10,12 @@ import spotify from './spotify'
 import store from './store'
 import config from './config'
 
+// serve static files (i.e. react app) only in a production environment
+if (app.get('env') === 'production') {
+    const servePath = path.join(__dirname, 'client', 'build')
+    app.use(express.static(servePath))
+    console.log(`Serving static files at ${servePath}`)
+}
 // next three auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
     const scopes = ['user-modify-playback-state']

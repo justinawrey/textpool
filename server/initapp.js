@@ -18,13 +18,6 @@ app.use(morgan('tiny'))
     .use(bodyParser.urlencoded())
     .use(session)
 
-// serve static files (i.e. react app) only in a production environment
-if (app.get('env') === 'production') {
-    const path = path.join(__dirname, 'client', 'build')
-    app.use(express.static(path))
-    console.log(`Serving static files at ${path}`)
-}
-
 // listen on config.PORT - defaults to 3001
 server.listen(app.get('port'), () =>
     console.log(`Serving on port ${app.get('port')}`),
