@@ -46,8 +46,22 @@ app.post('/sms', async (req, res, next) => {
         return next(e)
     }
 
-    const bestMatch = tracks.body.tracks.items[0],
-        { name, uri } = bestMatch,
+    const bestMatch = tracks.body.tracks.items[0]
+    if (!bestMatch) {
+        // No song match was found.
+        // Send an sms indicating that the requested song
+        // was not found.
+        const twiml = new twilio.twiml.MessagingResponse()
+        twiml.message(
+            `\nNo song matching the query ${search} found.\nPlease try again!`,
+        )
+        res.writeHead(200, { 'Content-Type': 'text/xml' })
+        res.end(twiml.toString())
+        return
+    }
+
+    // A match was found.  Send the response.
+    const { name, uri } = bestMatch,
         artist = bestMatch.artists[0].name,
         album = bestMatch.album.name,
         artUrl = bestMatch.album.images[1].url
