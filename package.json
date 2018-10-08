@@ -9,9 +9,9 @@
         "install-all": "npm i && cd client && npm i && cd ..",
         "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\"",
         "clean": "rm -rf build && mkdir build",
+        "postinstall": "npm run clean && npm run build-server",
         "build-server": "babel server --out-dir build",
-        "heroku-prebuild": "npm run clean && npm run build-server",
-        "heroku-postbuild": "cd client && npm i && npm run build"
+        "heroku-prebuild": "cd client && npm i && npm run build"
     },
     "repository": {
         "type": "git",
