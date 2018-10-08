@@ -1,4 +1,5 @@
 // external libs
+import '@babel/polyfill'
 import uuidv4 from 'uuid/v4'
 import twilio from 'twilio'
 
