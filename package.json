@@ -6,7 +6,8 @@
     "scripts": {
         "server": "nodemon --exec babel-node server/index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
-        "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\""
+        "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\"",
+        "heroku": "NODE_ENV=heroku npm run install-all && cd client && npm run build && cd .. && npm run server"
     },
     "repository": {
         "type": "git",
