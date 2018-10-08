@@ -26,11 +26,17 @@ app.get('/spotify-callback', async (req, res, next) => {
 
     spotify.setAccessToken(data.body['access_token'])
     spotify.setRefreshToken(data.body['refresh_token'])
-    req.session.room = 'testroom'
-    store['testroom'] = { songs: [], meta: {} }
 
-    // TODO: rm hardcode
-    res.redirect(`http://localhost:3000/room/${req.session.room}`)
+    // Set this room code to be the first 4 letters of a uuidv4.
+    // TODO: collision could happen: keep generating until unique one is found.
+    // We could simply use a full uuid, but that would require the user to enter
+    // a huge room code.
+    const room = uuidv4().slice(0, 4)
+    req.session.room = room
+    store[room] = { songs: [], meta: {} }
+
+    // TODO: rm hardcode of localhost 3000
+    res.redirect(`http://localhost:3000/room/${room}`)
 })
 
 // twilio webhook
