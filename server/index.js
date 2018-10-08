@@ -2,6 +2,7 @@
 import '@babel/polyfill'
 import uuidv4 from 'uuid/v4'
 import twilio from 'twilio'
+import path from 'path'
 
 // local libs
 import app from './initapp'

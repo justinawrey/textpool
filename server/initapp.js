@@ -4,7 +4,6 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import session from './session'
 import config from './config'
-import path from 'path'
 
 const app = express()
 const server = createServer(app)
