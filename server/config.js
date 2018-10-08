@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 
 let config
-if (process.env.NODE_ENV === 'heroku') {
+if (process.env.NODE_ENV === 'production') {
     config = process.env
 } else {
     const { parsed, error } = dotenv.config()
@@ -10,5 +10,7 @@ if (process.env.NODE_ENV === 'heroku') {
     }
     config = parsed
 }
+
+console.log(config)
 
 export default config
