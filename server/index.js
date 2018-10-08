@@ -2,22 +2,14 @@
 import '@babel/polyfill'
 import uuidv4 from 'uuid/v4'
 import twilio from 'twilio'
-import path from 'path'
-import express from 'express'
 
 // local libs
-import app from './initapp'
+import app, { server } from './initapp'
 import io from './socket'
 import spotify from './spotify'
 import store from './store'
 import config from './config'
 
-// serve static files (i.e. react app) only in a production environment
-if (app.get('env') === 'production') {
-    const servePath = path.join(__dirname, 'client', 'build')
-    app.use(express.static(servePath))
-    console.log(`Serving static files at ${servePath}`)
-}
 // next three auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
     const scopes = ['user-modify-playback-state']
@@ -170,3 +162,8 @@ app.get('/api/pause', async (req, res, next) => {
 
     res.sendStatus(200)
 })
+
+// listen on config.PORT - defaults to 3001
+server.listen(app.get('port'), () =>
+    console.log(`Serving on port ${app.get('port')}`),
+)

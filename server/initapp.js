@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import session from './session'
 import config from './config'
+import path from 'path'
 
 const app = express()
 const server = createServer(app)
@@ -17,9 +18,13 @@ app.use(morgan('tiny'))
     .use(bodyParser.urlencoded())
     .use(session)
 
-// listen on config.PORT - defaults to 3001
-server.listen(app.get('port'), () =>
-    console.log(`Serving on port ${app.get('port')}`),
-)
+// serve static files (i.e. react app) only in a production environment
+if (app.get('env') === 'production') {
+    // heroku will build static client files into /app/client/build
+    const servePath = path.join('app', 'client', 'build')
+    app.use(express.static(servePath))
+    console.log(`Serving static files at ${servePath}`)
+}
 
 export default app
+export { server }
