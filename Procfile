@@ -1,1 +1,1 @@
-web: babel-node server/index.js
+web: cd client && npm run build && cd .. && npm run server
