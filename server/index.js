@@ -4,10 +4,11 @@ import uuidv4 from 'uuid/v4'
 import twilio from 'twilio'
 
 // local libs
-import app, { server } from './initapp'
+import app from './initapp'
 import io from './socket'
 import spotify from './spotify'
 import store from './store'
+import config from './config'
 
 // next three auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
@@ -37,7 +38,7 @@ app.get('/spotify-callback', async (req, res, next) => {
     store[room] = { songs: [], meta: {} }
 
     // TODO: rm hardcode of localhost 3000
-    res.redirect(`http://localhost:3000/room/${room}`)
+    res.redirect(`${config.ORIGIN}/room/${room}`)
 })
 
 // twilio webhook
