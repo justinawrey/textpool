@@ -10,7 +10,7 @@ const app = express()
 const server = createServer(app)
 
 // app locals
-app.set('port', config.PORT || 3001)
+app.set('port', process.env.PORT || 3001)
 
 // init middleware
 app.use(morgan('tiny'))

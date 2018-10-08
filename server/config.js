@@ -11,6 +11,4 @@ if (process.env.NODE_ENV === 'production') {
     config = parsed
 }
 
-console.log(config)
-
 export default config
