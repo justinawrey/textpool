@@ -40,7 +40,8 @@
         "socket.io": "^2.1.1",
         "spotify-web-api-node": "^4.0.0",
         "twilio": "^3.19.2",
-        "uuid": "^3.3.2"
+        "uuid": "^3.3.2", 
+        "dotenv": "^6.0.0"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
