@@ -50,6 +50,7 @@ app.post('/sms', async (req, res, next) => {
             `\nInvalid room code.\nEither the requested room was closed or never existed.\nText <room> <song> <artist> to (778)-860-7371 to try again.`,
         )
         res.end(twiml.toString())
+        return
     }
 
     // Ask spotify API to find the best match
