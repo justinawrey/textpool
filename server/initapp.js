@@ -1,14 +1,16 @@
 import express from 'express'
+import config from './config'
 import { createServer } from 'http'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import session from './session'
 import path from 'path'
 
-// app locals
 const app = express()
 const server = createServer(app)
-app.set('port', process.env.PORT || 3001)
+
+// app locals
+app.set('port', config.PORT || 3001)
 
 // init middleware
 app.use(morgan('tiny'))

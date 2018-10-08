@@ -1,9 +1,3 @@
-import dotenv from 'dotenv'
-
-// config from .env file, do this first so other
-// imports can use process.env on initialization
-dotenv.config()
-
 // external libs
 import uuidv4 from 'uuid/v4'
 import twilio from 'twilio'
@@ -14,7 +8,7 @@ import io from './socket'
 import spotify from './spotify'
 import store from './store'
 
-// next two auth endpoints do not require a valid room before being hit
+// next three auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
     const scopes = ['user-modify-playback-state']
     res.redirect(spotify.createAuthorizeURL(scopes))
@@ -135,7 +129,7 @@ app.get('/api/pause', async (req, res, next) => {
     res.sendStatus(200)
 })
 
-// listen on process.env.PORT - defaults to 3001
+// listen on config.PORT - defaults to 3001
 server.listen(app.get('port'), () =>
     console.log(`Serving on port ${app.get('port')}`),
 )
