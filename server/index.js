@@ -161,8 +161,3 @@ app.get('/api/pause', async (req, res, next) => {
 
     res.sendStatus(200)
 })
-
-// listen on config.PORT - defaults to 3001
-server.listen(app.get('port'), () =>
-    console.log(`Serving on port ${app.get('port')}`),
-)

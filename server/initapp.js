@@ -23,5 +23,10 @@ if (app.get('env') === 'production') {
     app.use(express.static(path.join(__dirname, 'client', 'build')))
 }
 
+// listen on config.PORT - defaults to 3001
+server.listen(app.get('port'), () =>
+    console.log(`Serving on port ${app.get('port')}`),
+)
+
 export { server }
 export default app
