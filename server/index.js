@@ -35,10 +35,25 @@ app.get('/spotify-callback', async (req, res, next) => {
 
 // twilio webhook
 app.post('/sms', async (req, res, next) => {
+    // set up twilio xml response
+    const twiml = new twilio.twiml.MessagingResponse()
+    res.writeHead(200, { 'Content-Type': 'text/xml' })
+
     const { Body, From } = req.body
     let [room, ...search] = Body.split(/\s+/)
     search = search.join(' ')
 
+    // If the room requested is not an active session,
+    // let the user know by texting them back.
+    if (!(room in store)) {
+        twiml.message(
+            `\nInvalid room code.\nEither the requested room was closed or never existed.\nText <room> <song> <artist> to (778)-860-7371 to try again.`,
+        )
+        res.end(twiml.toString())
+    }
+
+    // Ask spotify API to find the best match
+    // for the incoming query.
     let tracks
     try {
         tracks = await spotify.searchTracks(search)
@@ -51,11 +66,9 @@ app.post('/sms', async (req, res, next) => {
         // No song match was found.
         // Send an sms indicating that the requested song
         // was not found.
-        const twiml = new twilio.twiml.MessagingResponse()
         twiml.message(
-            `\nNo song matching the query ${search} found.\nPlease try again!`,
+            `\nNo song matching the query "${search}" found.\nPlease try again!`,
         )
-        res.writeHead(200, { 'Content-Type': 'text/xml' })
         res.end(twiml.toString())
         return
     }
@@ -77,9 +90,7 @@ app.post('/sms', async (req, res, next) => {
     store[room].meta[id] = songMeta
 
     // send a response
-    const twiml = new twilio.twiml.MessagingResponse()
     twiml.message(`\nRequest received!\nSong: ${name}\nArtist: ${artist}`)
-    res.writeHead(200, { 'Content-Type': 'text/xml' })
     res.end(twiml.toString())
 })
 
