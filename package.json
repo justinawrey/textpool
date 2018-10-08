@@ -4,10 +4,11 @@
     "description": "spotify web queue with sms",
     "main": "index.js",
     "scripts": {
-        "server": "nodemon --exec babel-node server/index.js",
+        "server-dev": "nodemon --exec babel-node server/index.js",
+        "server-prod": "babel-node server/index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
         "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\"",
-        "heroku": "cd client && npm run build && cd .. && babel-node server/index.js"
+        "heroku-postbuild": "cd client && npm i && npm run build"
     },
     "repository": {
         "type": "git",
