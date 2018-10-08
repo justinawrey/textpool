@@ -5,11 +5,11 @@
     "main": "index.js",
     "scripts": {
         "server-dev": "nodemon --exec babel-node server/index.js",
+        "server-prod": "node ./build/index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
         "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\"",
         "clean": "rm -rf build && mkdir build",
         "build-server": "babel -d ./build ./server -s",
-        "run-server": "node ./build/index.js",
         "heroku-prebuild": "npm run clean && npm run build-server",
         "heroku-postbuild": "cd client && npm i && npm run build"
     },
