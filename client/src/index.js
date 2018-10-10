@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux'
 import { createLogger } from 'redux-logger'
+import createSagaMiddleware from 'redux-saga'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
@@ -16,6 +17,8 @@ import {
 
 import App from './App'
 import rootReducer from './reducers'
+import config from './config'
+import watcher from './sagas'
 import registerServiceWorker from './registerServiceWorker'
 
 library.add(
@@ -26,7 +29,15 @@ library.add(
     faPlayCircle,
     faPauseCircle,
 )
-const store = createStore(rootReducer, applyMiddleware(createLogger()))
+
+const sagaMiddleware = createSagaMiddleware()
+const middleware = [sagaMiddleware]
+if (config.NODE_ENV === 'development') {
+    middleware.push(createLogger({ collapsed: true }))
+}
+
+const store = createStore(rootReducer, applyMiddleware(...middleware))
+sagaMiddleware.run(watcher)
 
 ReactDOM.render(
     <Provider store={store}>
