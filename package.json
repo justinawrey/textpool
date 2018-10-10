@@ -7,7 +7,7 @@
         "server-dev": "nodemon --exec babel-node server/index.js",
         "server-prod": "node ./build/index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
-        "start": "concurrently \"nodemon --exec babel-node server/index.js\" \"cd client && npm start\"",
+        "start": "concurrently \"nodemon --exec NODE_ENV=development babel-node server/index.js\" \"cd client && npm start\"",
         "clean": "rm -rf build && mkdir build",
         "postinstall": "npm run clean && npm run build-server",
         "build-server": "babel server --out-dir build",
