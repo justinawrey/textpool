@@ -12,6 +12,23 @@ export const slideFromLeftConfig = {
 }
 export const SlideFromLeft = posed.div(slideFromLeftConfig)
 
+export const slideFromBLCornerConfig = {
+    visible: {
+        opacity: 1,
+        y: -10,
+        x: -10,
+        transition: ({ duration }) => ({
+            duration: duration || 200,
+        }),
+    },
+    hidden: {
+        opacity: 0,
+        y: 0,
+        x: 0,
+    },
+}
+export const SlideFromBLCorner = posed.div(slideFromBLCornerConfig)
+
 export const fadeInOutConfig = {
     beforeFade: {
         opacity: 0,

@@ -1,4 +1,4 @@
-/* song actions */
+// song actions
 export const SongActions = {
     QUEUE_SONG: 'QUEUE_SONG',
     DEQUEUE_SONG: 'DEQUEUE_SONG',
@@ -63,4 +63,46 @@ export const setMeta = (id, meta) => ({
     type: MetaActions.SET_META,
     id,
     meta,
+})
+
+export const WhitelistActions = {
+    SET_ALL_WHITELIST: 'SET_ALL_WHITELIST',
+    ADD_TO_WHITELIST: 'ADD_TO_WHITELIST',
+    REMOVE_FROM_WHITELIST: 'REMOVE_FROM_WHITELIST',
+}
+
+export const setAllWhitelist = numbers => ({
+    type: WhitelistActions.SET_ALL_WHITELIST,
+    numbers,
+})
+
+export const addToWhitelist = number => ({
+    type: WhitelistActions.ADD_TO_WHITELIST,
+    number,
+})
+
+export const removeFromWhitelist = number => ({
+    type: WhitelistActions.REMOVE_FROM_WHITELIST,
+    number,
+})
+
+export const BlacklistActions = {
+    SET_ALL_BLACKLIST: 'SET_ALL_BLACKLIST',
+    ADD_TO_BLACKLIST: 'ADD_TO_BLACKLIST',
+    REMOVE_FROM_BLACKLIST: 'REMOVE_FROM_BLACKLIST',
+}
+
+export const setAllBlacklist = numbers => ({
+    type: BlacklistActions.SET_ALL_BLACKLIST,
+    numbers,
+})
+
+export const addToBlacklist = number => ({
+    type: BlacklistActions.ADD_TO_BLACKLIST,
+    number,
+})
+
+export const removeFromBlacklist = number => ({
+    type: BlacklistActions.REMOVE_FROM_BLACKLIST,
+    number,
 })

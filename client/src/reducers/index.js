@@ -1,5 +1,10 @@
 import { combineReducers } from 'redux'
-import { SongActions, MetaActions } from '../actions'
+import {
+    SongActions,
+    MetaActions,
+    BlacklistActions,
+    WhitelistActions,
+} from '../actions'
 
 const songs = (state = [], action) => {
     switch (action.type) {
@@ -57,9 +62,43 @@ const playing = (state = false, action) => {
     }
 }
 
+// phone numbers in the blacklist
+const blackList = (state = [], action) => {
+    switch (action.type) {
+        case BlacklistActions.SET_ALL_BLACKLIST:
+            return action.numbers
+        case BlacklistActions.ADD_TO_BLACKLIST:
+            return [...state, action.number]
+        case BlacklistActions.REMOVE_FROM_BLACKLIST:
+            const removed = [...state]
+            removed.splice(removed.indexOf(action.number), 1)
+            return removed
+        default:
+            return state
+    }
+}
+
+// phone numbers in the whitelist
+const whiteList = (state = [], action) => {
+    switch (action.type) {
+        case WhitelistActions.SET_ALL_WHITELIST:
+            return action.numbers
+        case WhitelistActions.ADD_TO_WHITELIST:
+            return [...state, action.number]
+        case WhitelistActions.REMOVE_FROM_WHITELIST:
+            const removed = [...state]
+            removed.splice(removed.indexOf(action.number), 1)
+            return removed
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     songs,
     meta,
     active,
     playing,
+    blackList,
+    whiteList,
 })
