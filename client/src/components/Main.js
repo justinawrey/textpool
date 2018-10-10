@@ -9,6 +9,7 @@ import Playing from './Playing'
 import { Notification, CornerNotification } from './Notification'
 import { setMeta, queueSong } from '../actions'
 import { FadeInOut } from '../animations'
+import config from '../config'
 
 /* Components  */
 
@@ -24,7 +25,7 @@ class Main extends Component {
     componentDidMount() {
         const { match, queueSong } = this.props
         const { code } = match.params
-        const host = 'http://localhost:3001'
+        const host = config.serverOrigin
         this.socket = socket(host)
         this.socket.on('connect', () => console.log(`connected to ${host}`))
         this.socket.on(code, songData => queueSong(songData))

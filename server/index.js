@@ -37,7 +37,6 @@ app.get('/spotify-callback', async (req, res, next) => {
     req.session.room = room
     store[room] = { songs: [], meta: {} }
 
-    // TODO: rm hardcode of localhost 3000
     res.redirect(`${config.ORIGIN}/room/${room}`)
 })
 

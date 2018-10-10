@@ -93,7 +93,7 @@ class Login extends Component {
                     <Redirect to={`/room/${code}`} />
                 ) : (
                     <FadeIn initialPose="hidden" pose="visible" duration={750}>
-                        <a href="http://localhost:3001/api/login">
+                        <a href={`${config.clientOrigin}/api/login`}>
                             Login with Spotify
                         </a>
                     </FadeIn>
