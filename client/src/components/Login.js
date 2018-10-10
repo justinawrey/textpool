@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import Spinner from './Spinner'
 import { setAllMeta, setSongList } from '../actions'
 import { FadeIn } from '../animations'
+import config from '../config'
 
 const LoginButton = styled.div`
     display: flex;
