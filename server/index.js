@@ -12,7 +12,7 @@ import config from './config'
 
 // next three auth endpoints do not require a valid room before being hit
 app.get('/api/login', (req, res) => {
-    const scopes = ['user-modify-playback-state']
+    const scopes = ['user-modify-playback-state', 'user-read-playback-state']
     res.redirect(spotify.createAuthorizeURL(scopes))
 })
 
@@ -85,10 +85,20 @@ app.post('/sms', async (req, res, next) => {
     const { name, uri } = bestMatch,
         artist = bestMatch.artists[0].name,
         album = bestMatch.album.name,
-        artUrl = bestMatch.album.images[1].url
+        artUrl = bestMatch.album.images[1].url,
+        length = bestMatch.duration_ms
 
     const id = uuidv4()
-    const songMeta = { id, song: name, artist, album, uri, artUrl, from: From }
+    const songMeta = {
+        id,
+        song: name,
+        artist,
+        album,
+        uri,
+        length,
+        artUrl,
+        from: From,
+    }
 
     // emit through websocket
     io.emit(room, songMeta)
@@ -129,11 +139,11 @@ app.get('/api/meta', (req, res) => {
     res.status(200).json({ meta })
 })
 
-app.get('/api/play/:uri', async (req, res, next) => {
+app.get('/api/play/:id/:uri', async (req, res, next) => {
     const { uri } = req.params
     try {
         await spotify.play({
-            context_uri: uri,
+            uris: [uri],
         })
     } catch (e) {
         return next(e)

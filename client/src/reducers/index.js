@@ -19,6 +19,7 @@ const songs = (state = [], action) => {
 }
 
 // object of song metadata by id
+// TODO: fix this
 const meta = (state = {}, action) => {
     switch (action.type) {
         case MetaActions.SET_ALL_META:

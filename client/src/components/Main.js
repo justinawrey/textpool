@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import SongList from './SongList'
 import Playing from './Playing'
 import { Notification, CornerNotification } from './Notification'
-import { setMeta, queueSong } from '../actions'
+import { setMeta, queueSong, selectSong, playSong } from '../actions'
 import { FadeInOut } from '../animations'
 import config from '../config'
 
@@ -23,12 +23,18 @@ const Container = styled.div`
 
 class Main extends Component {
     componentDidMount() {
-        const { match, queueSong } = this.props
+        const { match, queueSong, selectAndPlaySong } = this.props
         const { code } = match.params
         const host = config.serverOrigin
         this.socket = socket(host)
         this.socket.on('connect', () => console.log(`connected to ${host}`))
+
+        // listen for requests to queue up songs from sms -> server -> client
         this.socket.on(code, songData => queueSong(songData))
+
+        // listen for requests to set the active song from server -> client
+        this.socket.on(`${code}-setactive`, id => selectAndPlaySong(id))
+
         this.socket.on('disconnect', () =>
             console.log(`disconnected from ${host}`),
         )
@@ -80,6 +86,10 @@ const mapDispatchToProps = dispatch => ({
     queueSong: ({ id, ...rest }) => {
         dispatch(setMeta(id, rest))
         dispatch(queueSong(id))
+    },
+    selectAndPlaySong: id => {
+        dispatch(selectSong(id))
+        dispatch(playSong())
     },
 })
 

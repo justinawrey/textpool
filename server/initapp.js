@@ -15,7 +15,7 @@ app.set('port', config.PORT || 3001)
 // init middleware
 app.use(morgan('tiny'))
     .use(express.json())
-    .use(bodyParser.urlencoded())
+    .use(bodyParser.urlencoded({ extended: true }))
     .use(session)
 
 // serve static files (i.e. react app) only in a production environment

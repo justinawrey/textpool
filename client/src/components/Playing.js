@@ -4,6 +4,11 @@ import { connect } from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { FadeIn } from '../animations'
 import { playSong, pauseSong, selectSong } from '../actions'
+import {
+    triggerPauseSong,
+    triggerPlaySong,
+    triggerPlaySongFromStart,
+} from '../actions/triggers'
 
 const StyledPlaying = styled(FadeIn)`
     flex: 1;
@@ -149,12 +154,23 @@ const mapStateToProps = state => {
         // for mergeProps
         active,
         songs,
+        meta,
     }
 }
 
 const mapDispatchToProps = dispatch => ({
-    play: () => dispatch(playSong()),
-    pause: () => dispatch(pauseSong()),
+    play: () => {
+        dispatch(playSong())
+        dispatch(triggerPlaySong())
+    },
+    pause: () => {
+        dispatch(pauseSong())
+        dispatch(triggerPauseSong())
+    },
+    playSongFromStart: (id, uri) => {
+        dispatch(triggerPlaySongFromStart(id, uri))
+        dispatch(playSong())
+    },
     previous: prevSong => dispatch(selectSong(prevSong)),
     next: nextSong => dispatch(selectSong(nextSong)),
 })
@@ -169,8 +185,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
             const idx = songs.indexOf(active)
             const prevSong =
                 idx === 0 ? songs[songs.length - 1] : songs[idx - 1]
+            const { uri } = stateProps.meta[prevSong]
             dispatchProps.previous(prevSong)
-            dispatchProps.play()
+            dispatchProps.playSongFromStart(prevSong, uri)
         }
     },
     next: () => {
@@ -179,8 +196,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
             const idx = songs.indexOf(active)
             const nextSong =
                 idx === songs.length - 1 ? songs[0] : songs[idx + 1]
+            const { uri } = stateProps.meta[nextSong]
             dispatchProps.next(nextSong)
-            dispatchProps.play()
+            dispatchProps.playSongFromStart(nextSong, uri)
         }
     },
 })
