@@ -5,6 +5,7 @@ export const slideFromLeftConfig = {
         x: '0%',
         delay: 150,
         delayChildren: 800,
+        staggerChildren: 50,
     },
     hidden: {
         x: '-200%',
