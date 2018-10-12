@@ -42,6 +42,9 @@ function* pauseSongSaga() {
 }
 
 function* checkLoginSaga() {
+    // starts the login spinner
+    yield put(startFetchingInitialData())
+
     let room
     try {
         room = yield apply(axios, 'get', ['/api/room'])
@@ -49,12 +52,12 @@ function* checkLoginSaga() {
         // we are not logged in
         // TODO: differentiate between other errors
         console.error(e)
+        yield call(delay, 500)
+        yield put(stopFetchingInitialData())
         return
     }
 
     // we are logged in.  Populate any initial song data.
-    // starts the login spinner
-    yield put(startFetchingInitialData())
     let songs, meta
     try {
         ;[songs, meta] = yield all([
