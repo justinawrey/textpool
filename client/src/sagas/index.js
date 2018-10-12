@@ -8,6 +8,9 @@ import {
     setAllMeta,
     setSongList,
     setRoom,
+    selectSong,
+    playSong,
+    pauseSong,
 } from '../actions'
 import { TriggerActions } from '../actions/triggers'
 
@@ -58,11 +61,12 @@ function* checkLoginSaga() {
     }
 
     // we are logged in.  Populate any initial song data.
-    let songs, meta
+    let songs, meta, active
     try {
-        ;[songs, meta] = yield all([
+        ;[songs, meta, active] = yield all([
             apply(axios, 'get', ['/api/songs']),
             apply(axios, 'get', ['/api/meta']),
+            apply(axios, 'get', ['/api/active']),
             // introduce a minimum load time of 1 seconds.
             // if data loads too fast the flashing spinner is jarring.
             call(delay, 1000),
@@ -78,6 +82,8 @@ function* checkLoginSaga() {
     yield put(setAllMeta(meta.data.meta))
     yield put(setSongList(songs.data.songs))
     yield put(setRoom(room.data.room))
+    yield put(selectSong(active.data.active))
+    yield put(active.data.playing ? playSong() : pauseSong())
     yield put(stopFetchingInitialData())
 }
 

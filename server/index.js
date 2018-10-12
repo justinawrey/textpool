@@ -35,7 +35,7 @@ app.get('/spotify-callback', async (req, res, next) => {
     // a huge room code.
     const room = uuidv4().slice(0, 4)
     req.session.room = room
-    store[room] = { songs: [], meta: {} }
+    store[room] = { songs: [], meta: {}, active: 0, playing: false }
 
     const env = app.get('env')
     if (env === 'development') {
@@ -144,8 +144,14 @@ app.get('/api/meta', (req, res) => {
     res.status(200).json({ meta })
 })
 
+app.get('/api/active', (req, res) => {
+    const { room } = req.session
+    const { active, playing } = store[room]
+    res.status(200).json({ active, playing })
+})
+
 app.get('/api/play/:id/:uri', async (req, res, next) => {
-    const { uri } = req.params
+    const { id, uri } = req.params
     try {
         await spotify.play({
             uris: [uri],
@@ -154,6 +160,9 @@ app.get('/api/play/:id/:uri', async (req, res, next) => {
         return next(e)
     }
 
+    const { room } = req.session
+    store[room].active = id
+    store[room].playing = true
     res.sendStatus(200)
 })
 
@@ -164,6 +173,8 @@ app.get('/api/play', async (req, res, next) => {
         return next(e)
     }
 
+    const { room } = req.session
+    store[room].playing = true
     res.sendStatus(200)
 })
 
@@ -174,6 +185,8 @@ app.get('/api/pause', async (req, res, next) => {
         return next(e)
     }
 
+    const { room } = req.session
+    store[room].playing = false
     res.sendStatus(200)
 })
 
