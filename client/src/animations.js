@@ -3,8 +3,8 @@ import posed from 'react-pose'
 export const slideFromLeftConfig = {
     visible: {
         x: '0%',
-        delay: 1100,
-        delayChildren: 1750,
+        delay: 150,
+        delayChildren: 800,
     },
     hidden: {
         x: '-200%',
@@ -28,9 +28,9 @@ export const fadeInOutConfig = {
     fadeOut: {
         opacity: 0,
         y: -20,
-        transition: {
-            duration: 750,
-        },
+        transition: ({ outDuration }) => ({
+            duration: outDuration || 750,
+        }),
     },
 }
 export const FadeInOut = posed.div(fadeInOutConfig)

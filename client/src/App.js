@@ -43,8 +43,8 @@ export default ({ code }) => (
     <ThemeProvider theme={Lettuce}>
         <Router history={history}>
             <Fragment>
+                {/* TODO: redirect all paths to login */}
                 <Route exact path={'/'} component={Login} />
-                <Route exact path={'/login'} component={Login} />
                 <Route exact path={'/room/:code'} component={Main} />
             </Fragment>
         </Router>

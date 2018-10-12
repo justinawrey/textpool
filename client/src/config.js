@@ -1,4 +1,5 @@
 const config = process.env
+
 if (config.NODE_ENV === 'development') {
     config.serverOrigin = 'http://localhost:3001'
     config.clientOrigin = 'http://localhost:3000'

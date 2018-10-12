@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import { SongActions, MetaActions } from '../actions'
+import { SongActions, MetaActions, RoomActions, FetchActions } from '../actions'
 
 const songs = (state = [], action) => {
     switch (action.type) {
@@ -58,9 +58,34 @@ const playing = (state = false, action) => {
     }
 }
 
+// the current room code for this session
+const room = (state = '', action) => {
+    switch (action.type) {
+        case RoomActions.SET_ROOM:
+            return action.room
+        default:
+            return state
+    }
+}
+
+// whether or not the app is currently fetching initial data
+// i.e. populating songs, meta, after a login attempt
+const fetchingInitialData = (state = false, action) => {
+    switch (action.type) {
+        case FetchActions.FETCH_START:
+            return true
+        case FetchActions.FETCH_STOP:
+            return false
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     songs,
     meta,
     active,
     playing,
+    room,
+    fetchingInitialData,
 })

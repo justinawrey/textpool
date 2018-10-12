@@ -98,7 +98,7 @@ const Playing = ({
         initialPose="hidden"
         pose="visible"
         duration={750}
-        delay={1750}
+        delay={800}
     >
         <div>
             <Album playing={playing} img={artUrl} />

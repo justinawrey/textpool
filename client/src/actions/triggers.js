@@ -7,6 +7,7 @@ export const TriggerActions = {
     TRIGGER_PLAY_SONG_FROM_START: 'TRIGGER_PLAY_SONG_FROM_START',
     TRIGGER_PLAY_SONG: 'TRIGGER_PLAY_SONG',
     TRIGGER_PAUSE_SONG: 'TRIGGER_PAUSE_SONG',
+    TRIGGER_CHECK_LOGIN: 'TRIGGER_CHECK_LOGIN',
 }
 
 export const triggerPlaySongFromStart = (id, uri) => ({
@@ -21,4 +22,8 @@ export const triggerPlaySong = () => ({
 
 export const triggerPauseSong = () => ({
     type: TriggerActions.TRIGGER_PAUSE_SONG,
+})
+
+export const triggerCheckLogin = () => ({
+    type: TriggerActions.TRIGGER_CHECK_LOGIN,
 })

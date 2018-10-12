@@ -37,7 +37,12 @@ app.get('/spotify-callback', async (req, res, next) => {
     req.session.room = room
     store[room] = { songs: [], meta: {} }
 
-    res.redirect(`${config.ORIGIN}/room/${room}`)
+    const env = app.get('env')
+    if (env === 'development') {
+        res.redirect(config.ORIGIN)
+    } else if (env === 'production') {
+        res.sendFile(app.get('indexPath'))
+    }
 })
 
 // twilio webhook

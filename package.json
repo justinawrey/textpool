@@ -4,7 +4,7 @@
     "description": "spotify web queue with sms",
     "main": "index.js",
     "scripts": {
-        "server-dev": "nodemon --exec babel-node server/index.js",
+        "server-dev": "NODE_ENV=development nodemon --exec babel-node server/index.js",
         "server-prod": "node ./build/index.js",
         "install-all": "npm i && cd client && npm i && cd ..",
         "start": "concurrently \"nodemon --exec NODE_ENV=development babel-node server/index.js\" \"cd client && npm start\"",
