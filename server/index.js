@@ -41,7 +41,7 @@ app.get('/spotify-callback', async (req, res, next) => {
     if (env === 'development') {
         res.redirect(config.ORIGIN)
     } else if (env === 'production') {
-        res.sendFile(app.get('indexPath'))
+        res.redirect('/')
     }
 })
 
