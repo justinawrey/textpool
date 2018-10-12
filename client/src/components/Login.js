@@ -38,7 +38,8 @@ const LoginButton = styled.div`
 `
 
 class Login extends Component {
-    componentDidMount() {
+    constructor(props) {
+        super(props)
         this.props.checkLogin()
     }
 
