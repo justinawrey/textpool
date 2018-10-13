@@ -47,10 +47,6 @@ app.get('/spotify-callback', async (req, res, next) => {
 
 // twilio webhook
 app.post('/sms', async (req, res, next) => {
-    // set up twilio xml response
-    const twiml = new twilio.twiml.MessagingResponse()
-    res.writeHead(200, { 'Content-Type': 'text/xml' })
-
     const { Body, From } = req.body
     let [room, ...search] = Body.split(/\s+/)
     search = search.join(' ')
@@ -65,8 +61,12 @@ app.post('/sms', async (req, res, next) => {
         return
     }
 
+    // set up twilio xml response
+    const twiml = new twilio.twiml.MessagingResponse()
+    res.writeHead(200, { 'Content-Type': 'text/xml' })
+
     // Ask spotify API to find the best match
-    // for the incoming query.
+    // for the incoming query
     let tracks
     try {
         tracks = await spotify.searchTracks(search)
