@@ -35,7 +35,13 @@ app.get('/spotify-callback', async (req, res, next) => {
     // a huge room code.
     const room = uuidv4().slice(0, 4)
     req.session.room = room
-    store[room] = { songs: [], meta: {}, active: 0, playing: false }
+    store[room] = {
+        songs: [],
+        meta: {},
+        active: 0,
+        playing: false,
+        pollTimer: null,
+    }
 
     const env = app.get('env')
     if (env === 'development') {
@@ -151,7 +157,9 @@ app.get('/api/active', (req, res) => {
 })
 
 app.get('/api/play/:id/:uri', async (req, res, next) => {
+    const { room } = req.session
     const { id, uri } = req.params
+
     try {
         await spotify.play({
             uris: [uri],
@@ -160,33 +168,37 @@ app.get('/api/play/:id/:uri', async (req, res, next) => {
         return next(e)
     }
 
-    const { room } = req.session
     store[room].active = id
     store[room].playing = true
+    startPolling(room)
     res.sendStatus(200)
 })
 
 app.get('/api/play', async (req, res, next) => {
+    const { room } = req.session
+
     try {
         await spotify.play()
     } catch (e) {
         return next(e)
     }
 
-    const { room } = req.session
     store[room].playing = true
+    startPolling(room)
     res.sendStatus(200)
 })
 
 app.get('/api/pause', async (req, res, next) => {
+    const { room } = req.session
+
     try {
         await spotify.pause()
     } catch (e) {
         return next(e)
     }
 
-    const { room } = req.session
     store[room].playing = false
+    stopPolling(room)
     res.sendStatus(200)
 })
 
@@ -194,3 +206,50 @@ app.get('/api/pause', async (req, res, next) => {
 server.listen(app.get('port'), () =>
     console.log(`Serving on port ${app.get('port')}`),
 )
+
+// TODO: polling for next song is a temporary bad solution...
+// replace this with something else after proof of concept
+// we might get rate limited doing it this way.
+const startPolling = room => {
+    // clear first so we dont leak a bunch of timers
+    clearInterval(store[room].pollTimer)
+
+    // set up a 5 second poll loop
+    store[room].pollTimer = setInterval(async () => {
+        let playing
+        try {
+            playing = await spotify.getMyCurrentPlayingTrack()
+        } catch (e) {
+            return e
+            //TODO: handle more gracefully
+        }
+
+        if (store[room].playing && !playing.body.is_playing) {
+            // Get the uri of the next song to play
+            const { active, songs, meta } = store[room]
+            const idx = songs.indexOf(active)
+            const nextSong =
+                idx === songs.length - 1 ? songs[0] : songs[idx + 1]
+            const { uri } = meta[nextSong]
+
+            // If we stopped playing, play the next track
+            try {
+                await spotify.play({
+                    uris: [uri],
+                })
+            } catch (e) {
+                return e
+                // TODO: handle more gracefully
+            }
+            store[room].active = nextSong
+
+            // push next song notification back to client so
+            // it can be updated
+            io.emit(`${room}-setactive`, nextSong)
+        }
+    }, 5000)
+}
+
+const stopPolling = room => {
+    clearInterval(store[room].pollTimer)
+}
