@@ -44,6 +44,16 @@ function* pauseSongSaga() {
     }
 }
 
+function* removeSongSaga(action) {
+    try {
+        yield apply(axios, 'get', [`/api/remove/${action.id}`])
+    } catch (e) {
+        console.error(e)
+        // TODO:
+        // dispatch some sort of error action
+    }
+}
+
 function* checkLoginSaga() {
     // starts the login spinner
     yield put(startFetchingInitialData())
@@ -94,5 +104,6 @@ export default function* watcher() {
     )
     yield takeEvery(TriggerActions.TRIGGER_PLAY_SONG, playSongSaga)
     yield takeEvery(TriggerActions.TRIGGER_PAUSE_SONG, pauseSongSaga)
+    yield takeEvery(TriggerActions.TRIGGER_REMOVE_SONG, removeSongSaga)
     yield takeEvery(TriggerActions.TRIGGER_CHECK_LOGIN, checkLoginSaga)
 }

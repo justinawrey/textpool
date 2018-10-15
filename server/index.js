@@ -156,6 +156,30 @@ app.get('/api/active', (req, res) => {
     res.status(200).json({ active, playing })
 })
 
+app.get('/api/remove/:id', async (req, res, next) => {
+    const { room } = req.session
+    const { id } = req.params
+    const { active } = store[room]
+
+    if (id === active) {
+        // if we removed the actively playing song,
+        // pause it first
+        try {
+            await spotify.pause()
+        } catch (e) {
+            return next(e)
+        }
+        store[room].active = 0
+        store[room].playing = false
+    }
+
+    // remove id from store, both songs and meta
+    const { songs, meta } = store[room]
+    store[room].songs = songs.filter(songId => songId !== id)
+    delete meta[id]
+    res.sendStatus(204)
+})
+
 app.get('/api/play/:id/:uri', async (req, res, next) => {
     const { room } = req.session
     const { id, uri } = req.params
@@ -171,7 +195,7 @@ app.get('/api/play/:id/:uri', async (req, res, next) => {
     store[room].active = id
     store[room].playing = true
     startPolling(room)
-    res.sendStatus(200)
+    res.sendStatus(204)
 })
 
 app.get('/api/play', async (req, res, next) => {
@@ -185,7 +209,7 @@ app.get('/api/play', async (req, res, next) => {
 
     store[room].playing = true
     startPolling(room)
-    res.sendStatus(200)
+    res.sendStatus(204)
 })
 
 app.get('/api/pause', async (req, res, next) => {
@@ -199,7 +223,7 @@ app.get('/api/pause', async (req, res, next) => {
 
     store[room].playing = false
     stopPolling(room)
-    res.sendStatus(200)
+    res.sendStatus(204)
 })
 
 // listen on config.PORT - defaults to 3001

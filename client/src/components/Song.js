@@ -5,7 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 import { FadeIn } from '../animations'
-import { triggerPlaySongFromStart } from '../actions/triggers'
+import {
+    triggerPlaySongFromStart,
+    triggerRemoveSong,
+} from '../actions/triggers'
 
 /* Presentational Component */
 
@@ -110,7 +113,10 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
         dispatch(triggerPlaySongFromStart(ownProps.id, uri))
     },
     selectDefault: () => dispatch(selectSong(0)),
-    removeCurrent: () => dispatch(removeSong(ownProps.id)),
+    removeCurrent: () => {
+        dispatch(removeSong(ownProps.id))
+        dispatch(triggerRemoveSong(ownProps.id))
+    },
     pauseCurrent: () => dispatch(pauseSong(ownProps.id)),
 })
 

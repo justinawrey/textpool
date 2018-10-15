@@ -7,6 +7,7 @@ export const TriggerActions = {
     TRIGGER_PLAY_SONG_FROM_START: 'TRIGGER_PLAY_SONG_FROM_START',
     TRIGGER_PLAY_SONG: 'TRIGGER_PLAY_SONG',
     TRIGGER_PAUSE_SONG: 'TRIGGER_PAUSE_SONG',
+    TRIGGER_REMOVE_SONG: 'TRIGGER_REMOVE_SONG',
     TRIGGER_CHECK_LOGIN: 'TRIGGER_CHECK_LOGIN',
 }
 
@@ -22,6 +23,11 @@ export const triggerPlaySong = () => ({
 
 export const triggerPauseSong = () => ({
     type: TriggerActions.TRIGGER_PAUSE_SONG,
+})
+
+export const triggerRemoveSong = id => ({
+    type: TriggerActions.TRIGGER_REMOVE_SONG,
+    id,
 })
 
 export const triggerCheckLogin = () => ({
