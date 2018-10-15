@@ -25,14 +25,10 @@ if (app.get('env') === 'production') {
     // serve static files in production
     const servePath = path.join(__dirname, '..', 'client', 'build')
     const indexPath = path.join(servePath, 'index.html')
+    app.set('indexPath', indexPath)
 
     app.use(express.static(servePath))
     console.log(`Serving static files at ${servePath}`)
-
-    // in production, re-route requests to / to serving index.html
-    app.get('/', (req, res) => {
-        res.sendFile(indexPath)
-    })
 }
 
 export default app
