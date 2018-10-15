@@ -227,9 +227,14 @@ app.get('/api/pause', async (req, res, next) => {
 })
 
 // in production, re-route requests to / to serving index.html
-app.get('*', (req, res) => {
-    res.sendFile(app.get('indexPath'))
-})
+if (app.get('env') === 'production') {
+    app.get('/', (req, res) => {
+        res.sendFile(app.get('indexPath'))
+    })
+    app.get('*', (req, res) => {
+        res.redirect('/')
+    })
+}
 
 // listen on config.PORT - defaults to 3001
 server.listen(app.get('port'), () =>
