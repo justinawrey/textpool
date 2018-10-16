@@ -6,7 +6,7 @@ import twilio from 'twilio'
 // local libs
 import app, { server } from './initapp'
 import io from './socket'
-import spotify from './spotify'
+import spotify, { newSpotifyClient } from './spotify'
 import store from './store'
 import config from './config'
 
@@ -26,8 +26,9 @@ app.get('/spotify-callback', async (req, res, next) => {
         return next(e)
     }
 
-    spotify.setAccessToken(data.body['access_token'])
-    spotify.setRefreshToken(data.body['refresh_token'])
+    const clientSpotify = newSpotifyClient()
+    clientSpotify.setAccessToken(data.body['access_token'])
+    clientSpotify.setRefreshToken(data.body['refresh_token'])
 
     // Set this room code to be the first 4 letters of a uuidv4.
     // TODO: collision could happen: keep generating until unique one is found.
@@ -41,6 +42,7 @@ app.get('/spotify-callback', async (req, res, next) => {
         active: 0,
         playing: false,
         pollTimer: null,
+        clientSpotify,
     }
 
     const env = app.get('env')
@@ -73,9 +75,10 @@ app.post('/sms', async (req, res, next) => {
 
     // Ask spotify API to find the best match
     // for the incoming query
+    const { clientSpotify } = store[room]
     let tracks
     try {
-        tracks = await spotify.searchTracks(search)
+        tracks = await clientSpotify.searchTracks(search)
     } catch (e) {
         return next(e)
     }
@@ -159,13 +162,13 @@ app.get('/api/active', (req, res) => {
 app.get('/api/remove/:id', async (req, res, next) => {
     const { room } = req.session
     const { id } = req.params
-    const { active } = store[room]
+    const { active, clientSpotify } = store[room]
 
     if (id === active) {
         // if we removed the actively playing song,
         // pause it first
         try {
-            await spotify.pause()
+            await clientSpotify.pause()
         } catch (e) {
             return next(e)
         }
@@ -183,9 +186,10 @@ app.get('/api/remove/:id', async (req, res, next) => {
 app.get('/api/play/:id/:uri', async (req, res, next) => {
     const { room } = req.session
     const { id, uri } = req.params
+    const { clientSpotify } = store[room]
 
     try {
-        await spotify.play({
+        await clientSpotify.play({
             uris: [uri],
         })
     } catch (e) {
@@ -200,9 +204,10 @@ app.get('/api/play/:id/:uri', async (req, res, next) => {
 
 app.get('/api/play', async (req, res, next) => {
     const { room } = req.session
+    const { clientSpotify } = store[room]
 
     try {
-        await spotify.play()
+        await clientSpotify.play()
     } catch (e) {
         return next(e)
     }
@@ -214,9 +219,10 @@ app.get('/api/play', async (req, res, next) => {
 
 app.get('/api/pause', async (req, res, next) => {
     const { room } = req.session
+    const { clientSpotify } = store[room]
 
     try {
-        await spotify.pause()
+        await clientSpotify.pause()
     } catch (e) {
         return next(e)
     }
@@ -251,8 +257,9 @@ const startPolling = room => {
     // set up a 5 second poll loop
     store[room].pollTimer = setInterval(async () => {
         let playing
+        const { clientSpotify } = store[room]
         try {
-            playing = await spotify.getMyCurrentPlayingTrack()
+            playing = await clientSpotify.getMyCurrentPlayingTrack()
         } catch (e) {
             return e
             //TODO: handle more gracefully
@@ -268,7 +275,7 @@ const startPolling = room => {
 
             // If we stopped playing, play the next track
             try {
-                await spotify.play({
+                await clientSpotify.play({
                     uris: [uri],
                 })
             } catch (e) {
