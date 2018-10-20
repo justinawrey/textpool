@@ -1,7 +1,11 @@
 import React from 'react'
-import styled, { injectGlobal, ThemeProvider } from 'styled-components'
 import { Provider } from 'react-redux'
 import { storiesOf } from '@storybook/react'
+import styled, { ThemeProvider, injectGlobal } from 'styled-components'
+import Playing from '../components/Playing'
+import SongList from '../components/SongList'
+import initialState, { createInitialStore } from './initialStates'
+import Lettuce from '../themes'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
     faTimes,
@@ -11,16 +15,6 @@ import {
     faPlayCircle,
     faPauseCircle,
 } from '@fortawesome/free-solid-svg-icons'
-
-import Playing from '../components/Playing'
-import SongList from '../components/SongList'
-import PopoverGenerator, {
-    WhitelistPopover,
-    BlacklistPopover,
-    ConfigPopover,
-} from '../components/Popover'
-import initialState, { createInitialStore } from './initialStates'
-import Lettuce from '../themes'
 
 injectGlobal`
     html {
@@ -68,7 +62,7 @@ storiesOf('Playing', module)
     ))
     .add('component', () => <Playing />)
 
-storiesOf('Song', module)
+storiesOf('SongList', module)
     .addDecorator(story => (
         <ThemeProvider theme={Lettuce}>
             <Provider store={createInitialStore(initialState)}>
@@ -77,32 +71,3 @@ storiesOf('Song', module)
         </ThemeProvider>
     ))
     .add('component', () => <SongList />)
-
-storiesOf('Popover', module)
-    .addDecorator(story => (
-        <ThemeProvider theme={Lettuce}>
-            <Provider store={createInitialStore(initialState)}>
-                <Center>{story()}</Center>
-            </Provider>
-        </ThemeProvider>
-    ))
-    .add('config', () => {
-        const Config = PopoverGenerator('times', 'click', ConfigPopover)
-        return <Config />
-    })
-    .add('whitelist', () => {
-        const WhitelistTooltip = PopoverGenerator(
-            'times',
-            'hover',
-            WhitelistPopover,
-        )
-        return <WhitelistTooltip />
-    })
-    .add('blacklist', () => {
-        const BlacklistTooltip = PopoverGenerator(
-            'times',
-            'hover',
-            BlacklistPopover,
-        )
-        return <BlacklistTooltip />
-    })

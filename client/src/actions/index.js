@@ -106,3 +106,28 @@ export const removeFromBlacklist = number => ({
     type: BlacklistActions.REMOVE_FROM_BLACKLIST,
     number,
 })
+
+export const RoomActions = {
+    SET_ROOM: 'SET_ROOM',
+}
+
+// set a room code
+export const setRoom = room => ({
+    type: RoomActions.SET_ROOM,
+    room,
+})
+
+export const FetchActions = {
+    FETCH_START: 'FETCH_START',
+    FETCH_STOP: 'FETCH_STOP',
+}
+
+// start fetching initial data
+export const startFetchingInitialData = () => ({
+    type: FetchActions.FETCH_START,
+})
+
+// stop fetching initial data
+export const stopFetchingInitialData = () => ({
+    type: FetchActions.FETCH_STOP,
+})

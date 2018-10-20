@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import axios from 'axios'
+import { PoseGroup } from 'react-pose'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
 import Spinner from './Spinner'
-import { setAllMeta, setSongList } from '../actions'
-import { FadeIn } from '../animations'
+import { FadeInOut } from '../animations'
 import config from '../config'
+import { triggerCheckLogin } from '../actions/triggers'
 
 const LoginButton = styled.div`
     display: flex;
@@ -40,74 +40,47 @@ const LoginButton = styled.div`
 class Login extends Component {
     constructor(props) {
         super(props)
-        // let loggedIn = localStorage.getItem('loggedIn') || false
-        // if (loggedIn) {
-        //     const { expires } = JSON.parse(loggedIn)
-        //     if (Date.now() >= expires) {
-        //         loggedIn = false
-        //     }
-        // }
-        this.state = {
-            // fetching: loggedIn,
-            fetching: true,
-            code: null,
-            // loggedIn,
-            loggedIn: false,
-        }
-    }
-
-    componentDidMount() {
-        const { fetching } = this.state
-        const { setSongList, setAllMeta } = this.props
-
-        if (fetching) {
-            // fake spinner for 1 second
-            setTimeout(async () => {
-                let room, songs, meta
-                try {
-                    room = await axios.get('/api/room')
-                    songs = await axios.get('/api/songs')
-                    meta = await axios.get('/api/meta')
-                } catch (e) {
-                    console.error(e)
-                    this.setState({ fetching: false })
-                    return
-                }
-                setAllMeta(meta.data.meta)
-                setSongList(songs.data.songs)
-                this.setState({
-                    fetching: false,
-                    code: room.data.room,
-                })
-            }, 1000)
-        }
+        this.props.checkLogin()
     }
 
     render() {
-        const { fetching, code, loggedIn } = this.state
-
+        const { room, fetchingInitialData } = this.props
         return (
             <LoginButton>
-                {fetching ? (
-                    <Spinner round />
-                ) : loggedIn ? (
-                    <Redirect to={`/room/${code}`} />
-                ) : (
-                    <FadeIn initialPose="hidden" pose="visible" duration={750}>
-                        <a href={`${config.clientOrigin}/api/login`}>
-                            Login with Spotify
-                        </a>
-                    </FadeIn>
-                )}
+                <PoseGroup
+                    animateOnMount
+                    preEnterPose="beforeFade"
+                    enterPose="fadeIn"
+                    exitPose="fadeOut"
+                >
+                    {fetchingInitialData ? (
+                        <FadeInOut>
+                            <Spinner round />
+                        </FadeInOut>
+                    ) : room ? (
+                        <Redirect to={`/room/${room}`} />
+                    ) : (
+                        <FadeInOut>
+                            <a href={`${config.serverOrigin}/api/login`}>
+                                Login with Spotify
+                            </a>
+                        </FadeInOut>
+                    )}
+                </PoseGroup>
             </LoginButton>
         )
     }
 }
 
 export default connect(
-    null,
+    state => {
+        const { room, fetchingInitialData } = state
+        return {
+            room,
+            fetchingInitialData,
+        }
+    },
     dispatch => ({
-        setSongList: songs => dispatch(setSongList(songs)),
-        setAllMeta: meta => dispatch(setAllMeta(meta)),
+        checkLogin: () => dispatch(triggerCheckLogin()),
     }),
 )(Login)

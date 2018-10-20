@@ -12,6 +12,7 @@ const StyledList = styled(SlideFromLeft)`
     padding: ${({ theme }) => `${theme.baseMargin}px`};
     border-radius: ${({ theme }) => `${theme.baseRadius}px`};
     height: 100%;
+    overflow: auto;
     flex: 1;
 `
 

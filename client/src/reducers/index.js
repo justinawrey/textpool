@@ -4,6 +4,8 @@ import {
     MetaActions,
     BlacklistActions,
     WhitelistActions,
+    RoomActions,
+    FetchActions,
 } from '../actions'
 
 const songs = (state = [], action) => {
@@ -24,6 +26,7 @@ const songs = (state = [], action) => {
 }
 
 // object of song metadata by id
+// TODO: fix this
 const meta = (state = {}, action) => {
     switch (action.type) {
         case MetaActions.SET_ALL_META:
@@ -62,6 +65,16 @@ const playing = (state = false, action) => {
     }
 }
 
+// the current room code for this session
+const room = (state = '', action) => {
+    switch (action.type) {
+        case RoomActions.SET_ROOM:
+            return action.room
+        default:
+            return state
+    }
+}
+
 // phone numbers in the blacklist
 const blackList = (state = [], action) => {
     switch (action.type) {
@@ -94,6 +107,19 @@ const whiteList = (state = [], action) => {
     }
 }
 
+// whether or not the app is currently fetching initial data
+// i.e. populating songs, meta, after a login attempt
+const fetchingInitialData = (state = false, action) => {
+    switch (action.type) {
+        case FetchActions.FETCH_START:
+            return true
+        case FetchActions.FETCH_STOP:
+            return false
+        default:
+            return state
+    }
+}
+
 export default combineReducers({
     songs,
     meta,
@@ -101,4 +127,6 @@ export default combineReducers({
     playing,
     blackList,
     whiteList,
+    room,
+    fetchingInitialData,
 })

@@ -101,7 +101,7 @@ export const CornerNotification = ({ code }) => (
     <StyledCornerNotification
         initialPose="hidden"
         pose="visible"
-        delay={2500}
+        delay={1550}
         duration={750}
     >
         <div>

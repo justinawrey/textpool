@@ -38,4 +38,8 @@ export default {
 }
 
 export const createInitialStore = initialState =>
-    createStore(rootReducer, initialState, applyMiddleware(createLogger()))
+    createStore(
+        rootReducer,
+        initialState,
+        applyMiddleware(createLogger({ collapsed: true })),
+    )

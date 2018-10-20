@@ -5,6 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { selectSong, playSong, pauseSong, removeSong } from '../actions'
 import { FadeIn } from '../animations'
+import {
+    triggerPlaySongFromStart,
+    triggerRemoveSong,
+} from '../actions/triggers'
 
 /* Presentational Component */
 
@@ -90,22 +94,29 @@ const Song = ({ song, artist, from, active, selectCurrent, removeCurrent }) => (
 /* Container logic */
 
 const mapStateToProps = (state, ownProps) => {
-    const { song, artist, from } = state.meta[ownProps.id]
+    const { song, artist, from, uri } = state.meta[ownProps.id]
     return {
         active: ownProps.id === state.active,
         song,
         artist,
         from,
+
+        // for mergeProps
+        uri,
     }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    selectCurrent: () => {
+    selectCurrent: uri => {
         dispatch(selectSong(ownProps.id))
         dispatch(playSong(ownProps.id))
+        dispatch(triggerPlaySongFromStart(ownProps.id, uri))
     },
     selectDefault: () => dispatch(selectSong(0)),
-    removeCurrent: () => dispatch(removeSong(ownProps.id)),
+    removeCurrent: () => {
+        dispatch(removeSong(ownProps.id))
+        dispatch(triggerRemoveSong(ownProps.id))
+    },
     pauseCurrent: () => dispatch(pauseSong(ownProps.id)),
 })
 
@@ -113,9 +124,13 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
     ...stateProps,
     ...dispatchProps,
     ...ownProps,
+    selectCurrent: () => {
+        dispatchProps.selectCurrent(stateProps.uri)
+    },
     removeCurrent: () => {
         if (stateProps.active) {
             dispatchProps.pauseCurrent()
+
             // Set the active song back to a default of none
             dispatchProps.selectDefault()
         }

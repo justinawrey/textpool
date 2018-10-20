@@ -7,3 +7,5 @@ export default new spotify({
     clientSecret: config.SPOTIFY_CLIENT_SECRET,
     redirectUri: config.REDIRECT_URI,
 })
+
+export const newSpotifyClient = () => new spotify()
